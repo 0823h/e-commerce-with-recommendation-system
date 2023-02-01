@@ -1,0 +1,28 @@
+{
+  "name": "tmdt-backend",
+  "version": "1.0.0",
+  "description": "Backend codebase using NodeJS + Express + PostgreSQL",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon ./src/server.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hungpd90/tmdt-backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hungpd90/tmdt-backend/issues"
+  },
+  "homepage": "https://github.com/hungpd90/tmdt-backend#readme",
+  "dependencies": {
+    "@types/express": "^4.17.16",
+    "@types/morgan": "^1.9.4",
+    "express": "^4.18.2",
+    "morgan": "^1.10.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^4.9.5"
+  }
+}
