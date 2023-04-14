@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import { Request as JWTRequest } from 'express-jwt';
 import ProductService from './product.services';
 
 class ProductController {
@@ -8,15 +9,28 @@ class ProductController {
     this.productService = productService;
   }
 
-  getAllProducts = async (req: Request, res: Response, next: NextFunction) => {
+  getAllProducts = async (req: JWTRequest, res: Response, next: NextFunction) => {
     try {
-      const products = this.productService.getAllProducts();
+      const products = this.productService.getAllProducts(req);
       res.status(200).json({
         message: 'success',
         products,
       });
     } catch (error) {
-      next(error);
+      return next(error);
+    }
+  };
+
+  createProduct = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const product = await this.productService.createProduct(req);
+      return res.status(200).json({
+        status: 200,
+        message: 'Success',
+        data: product,
+      });
+    } catch (error) {
+      return next(error);
     }
   };
 }
