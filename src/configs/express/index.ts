@@ -4,6 +4,7 @@ import routes from '@src/api/v2/modules';
 
 import { config } from 'dotenv';
 import cors from 'cors';
+import db from '../database';
 
 config();
 
@@ -24,4 +25,5 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.use('/api/v2', routes);
+
 export default app;
