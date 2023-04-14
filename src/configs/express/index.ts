@@ -1,7 +1,7 @@
 import express from 'express';
 import morgan from 'morgan';
 import routes from '@src/api/v2/modules';
-import cors from 'cors';
+
 import { config } from 'dotenv';
 
 config();
