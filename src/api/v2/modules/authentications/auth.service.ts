@@ -23,9 +23,11 @@ class AuthService {
       });
 
       if (user_existed) {
+        // console.log('Go 1');
+
         throw new HttpException('Email or Phone number has been already taken', 400);
       }
-
+      // console.log('Go 2');
       const id = objectId();
       const hashPassword: string = await bcryptHashPassword(<string>payload.password);
       const user = await this.userModel.create({

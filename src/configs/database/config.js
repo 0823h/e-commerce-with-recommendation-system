@@ -3,11 +3,11 @@ require('dotenv').config();
 
 /** @type {import('sequelize').Options} */
 const config = {
-  username: process.env.DB_USERNAME || 'postgres',
-  password: process.env.DB_PASSWORD || 'admin',
-  database: process.env.DB_NAME || 'db_aunty',
+  username: process.env.DB_USERNAME || 'root',
+  password: process.env.DB_PASSWORD || '1',
+  database: process.env.DB_NAME || 'tmdt_db',
   host: process.env.DB_HOSTNAME || '127.0.0.1',
-  port: Number(process.env.DB_PORT || '5432'),
+  port: Number(process.env.DB_PORT || '8002'),
   dialect: 'postgres',
   protocol: 'postgres',
   dialectOptions: {
