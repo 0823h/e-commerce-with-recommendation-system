@@ -1,6 +1,6 @@
 import { Joi } from 'express-validation';
 
-export const productCreatePayload = {
+export const productCreateBody = {
   body: Joi.object({
     name: Joi.string().required(),
     description: Joi.string().optional(),

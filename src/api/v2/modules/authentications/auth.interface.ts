@@ -1,4 +1,4 @@
-import { IUser } from '@src/configs/database/models/category.model';
+import { IUser } from '@src/configs/database/models/user.model';
 import { Optional } from 'sequelize';
 
 export interface IAuthRegister
