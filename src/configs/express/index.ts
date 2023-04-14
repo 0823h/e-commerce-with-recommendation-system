@@ -22,7 +22,7 @@ const corsOptions = {
 // Cors
 app.use(cors(corsOptions));
 
-// app.use(ResponseHelper.getDefaultResponseHandler);
+app.use(ResponseHelper.middlewareResponse);
 
 // Morgan
 if (process.env.NODE_ENV === 'development') {
