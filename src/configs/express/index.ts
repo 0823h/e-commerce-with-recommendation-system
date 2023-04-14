@@ -3,6 +3,7 @@ import morgan from 'morgan';
 import routes from '@src/api/v2/modules';
 
 import { config } from 'dotenv';
+import cors from 'cors';
 
 config();
 
@@ -23,8 +24,4 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 app.use('/api/v2', routes);
-console.log('abc');
 export default app;
-function cors(corsOptions: { origin: string; methods: string; credentials: boolean }): any {
-  throw new Error('Function not implemented.');
-}

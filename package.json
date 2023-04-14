@@ -5,7 +5,18 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon ./src/server.ts"
+    "prepare": "husky install",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "eslint \"src/**/*.ts\" --fix",
+    "build": "rimraf ./dist && npx tsc",
+    "dev": "nodemon ./src/server.ts",
+    "start": "npm run build && node -r ts-node/register ./dist/server.js",
+    "staging": "npm run build && NODE_ENV=staging node -r ts-node/register ./dist/server.js",
+    "production": "npm run build && NODE_ENV=production node -r ts-node/register ./dist/server.js",
+    "seed:all": "npx sequelize-cli db:seed:all",
+    "seed:up": "npx sequelize-cli db:seed --seed",
+    "seed:down": "npx sequelize-cli db:seed:undo --seed",
+    "seed:generate": "npx sequelize-cli seed:generate --name"
   },
   "repository": {
     "type": "git",
@@ -29,6 +40,7 @@
     "scikitjs": "^1.24.0",
     "sequelize": "^6.29.0",
     "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^4.9.5"
   },
   "devDependencies": {
