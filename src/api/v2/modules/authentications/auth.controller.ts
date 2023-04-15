@@ -23,6 +23,20 @@ class AuthController {
       return next(error);
     }
   };
+
+  login = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const data = await this.authService.login(req.body);
+      return res.status(200).json({
+        status: 200,
+        message: 'Success',
+        data,
+      });
+    } catch (error) {
+      console.log('error', error);
+      return next(error);
+    }
+  };
 }
 
 export default AuthController;

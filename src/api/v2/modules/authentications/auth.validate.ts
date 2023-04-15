@@ -9,3 +9,10 @@ export const authRegisterBody = {
     last_name: Joi.string().optional(),
   }),
 };
+
+export const authLoginBody = {
+  body: Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().required(),
+  }),
+};
