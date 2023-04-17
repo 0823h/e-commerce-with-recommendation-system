@@ -18,7 +18,7 @@ class CategoryService {
       const orderBy: string = (req.query.orderBy as string) || 'createdAt';
 
       const query: IQuery = {
-        where: { deleted: false },
+        // where: { deleted: false },
         order: [[`${orderBy}`, `${(sort as string).toUpperCase()}`]],
       };
 
@@ -40,3 +40,5 @@ class CategoryService {
     }
   };
 }
+
+export default CategoryService;
