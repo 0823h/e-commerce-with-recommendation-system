@@ -20,6 +20,18 @@ class CategoryController {
       return next(error);
     }
   };
+
+  createCategory = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const category = await this.categoryService.createCategory(req);
+      return res.status(200).json({
+        message: 'success',
+        data: category,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  };
 }
 
 export default CategoryController;

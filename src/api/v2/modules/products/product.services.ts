@@ -1,14 +1,20 @@
 import Product, { IProduct } from '@models/product.model';
+import Category, { ICategory } from '@src/configs/database/models/category.model';
+import ProductCategory, { IProductCategory } from '@src/configs/database/models/product_category.model';
 import { ModelStatic } from 'sequelize';
 import { Request as JWTRequest } from 'express-jwt';
 import { HttpException } from '../../utils/http-exception';
-import { IProductCreate, IQuery } from './product.interface';
+import { IQuery } from './product.interface';
 import { objectId } from '../../utils/functions';
 
 class ProductService {
   private readonly productModel: ModelStatic<IProduct>;
+  private readonly productCategoryModel: ModelStatic<IProductCategory>;
+  private readonly categoryModel: ModelStatic<ICategory>;
   constructor() {
     this.productModel = Product;
+    this.productCategoryModel = ProductCategory;
+    this.categoryModel = Category;
   }
 
   getAllProducts = async (req: JWTRequest): Promise<{ rows: IProduct[]; count: number }> => {
@@ -40,7 +46,7 @@ class ProductService {
     }
   };
 
-  createProduct = async (req: JWTRequest) => {
+  createProduct = async (req: JWTRequest): Promise<IProduct> => {
     try {
       const id = objectId();
       const product = await this.productModel.create({
@@ -50,6 +56,23 @@ class ProductService {
 
       if (product == null) {
         throw new HttpException('Cannot create product', 404);
+      }
+
+      const category_ids = req.body.categories;
+
+      if (category_ids.length > 0) {
+        const createCategoryPromises = category_ids.map(async (category_id: string) => {
+          const category = await this.categoryModel.findByPk(category_id);
+          if (category) {
+            await this.productCategoryModel.create({
+              id: objectId(),
+              product_id: product.id,
+              category_id,
+            });
+          }
+        });
+
+        await Promise.all(createCategoryPromises);
       }
 
       return product;

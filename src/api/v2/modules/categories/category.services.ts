@@ -3,6 +3,7 @@ import { ModelStatic } from 'sequelize';
 import { Request as JWTRequest } from 'express-jwt';
 import { HttpException } from '../../utils/http-exception';
 import { IQuery } from '../products/product.interface';
+import { objectId } from '../../utils/functions';
 
 class CategoryService {
   private readonly categoryModel: ModelStatic<ICategory>;
@@ -34,6 +35,25 @@ class CategoryService {
       }
 
       return categories;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+
+  createCategory = async (req: JWTRequest): Promise<ICategory> => {
+    try {
+      const id = objectId();
+      const category = await this.categoryModel.create({
+        id,
+        ...req.body,
+      });
+
+      if (!category) {
+        throw new HttpException('Cannot create category', 409);
+      }
+
+      return category;
     } catch (error) {
       console.log(error);
       throw error;
