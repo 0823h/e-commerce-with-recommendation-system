@@ -33,6 +33,19 @@ class ProductController {
       return next(error);
     }
   };
+
+  rateProduct = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const feedback = await this.productService.rateProduct(req);
+      return res.status(200).json({
+        status: 200,
+        message: 'Success',
+        data: feedback,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  };
 }
 
 export default ProductController;

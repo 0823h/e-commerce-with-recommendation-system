@@ -9,3 +9,9 @@ export const productCreateBody = {
     categories: Joi.array().items(Joi.string().optional()).optional(),
   }),
 };
+
+export const productRateBody = {
+  body: Joi.object({
+    rate: Joi.number().required(),
+  }),
+};

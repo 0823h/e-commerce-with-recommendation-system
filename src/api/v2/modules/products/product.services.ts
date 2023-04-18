@@ -1,7 +1,10 @@
 import Product, { IProduct } from '@models/product.model';
 import Category, { ICategory } from '@src/configs/database/models/category.model';
 import ProductCategory, { IProductCategory } from '@src/configs/database/models/product_category.model';
+import Feedback, { IFeedback } from '@src/configs/database/models/feedback.model';
+import User, { IUser } from '@src/configs/database/models/user.model';
 import { ModelStatic } from 'sequelize';
+import { JwtPayload } from 'jsonwebtoken';
 import { Request as JWTRequest } from 'express-jwt';
 import { HttpException } from '../../utils/http-exception';
 import { IQuery } from './product.interface';
@@ -11,10 +14,14 @@ class ProductService {
   private readonly productModel: ModelStatic<IProduct>;
   private readonly productCategoryModel: ModelStatic<IProductCategory>;
   private readonly categoryModel: ModelStatic<ICategory>;
+  private readonly feedbackModel: ModelStatic<IFeedback>;
+  private readonly userModel: ModelStatic<IUser>;
   constructor() {
     this.productModel = Product;
     this.productCategoryModel = ProductCategory;
     this.categoryModel = Category;
+    this.feedbackModel = Feedback;
+    this.userModel = User;
   }
 
   getAllProducts = async (req: JWTRequest): Promise<{ rows: IProduct[]; count: number }> => {
@@ -76,6 +83,34 @@ class ProductService {
       }
 
       return product;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+
+  rateProduct = async (req: JWTRequest): Promise<IFeedback> => {
+    try {
+      const { user_id } = (<JwtPayload>req.auth).data;
+      const user = await this.userModel.findByPk(user_id);
+      if (!user) {
+        throw new HttpException('User not found', 403);
+      }
+
+      // Product id
+      const { product_id } = req.params;
+      const product = await this.productModel.findByPk(product_id);
+      if (!product) {
+        throw new HttpException('Product not found', 404);
+      }
+
+      const feedback = this.feedbackModel.create({
+        user_id,
+        product_id,
+        ...req.body,
+      });
+
+      return feedback;
     } catch (error) {
       console.log(error);
       throw error;
