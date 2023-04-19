@@ -11,9 +11,6 @@ app.listen(PORT, async () => {
     await models.associate?.();
     console.log('✅ Database connected!');
     console.log(`🚀 Server listening on port: ${PORT}`);
-
-    const cf = new CF();
-    cf.initmatrix();
   } catch (error) {
     console.log('Failed to start server!');
     console.log(error);

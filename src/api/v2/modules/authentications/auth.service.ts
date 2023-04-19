@@ -28,12 +28,12 @@ class AuthService {
         throw new HttpException('Email or Phone number has been already taken', 400);
       }
       // console.log('Go 2');
-      const id = objectId();
+      const n_users = (await this.userModel.findAndCountAll()).count;
       const hashPassword: string = await bcryptHashPassword(<string>payload.password);
       const user = await this.userModel.create({
         ...payload,
         password: hashPassword,
-        id,
+        id: n_users,
       });
 
       return user;

@@ -2,7 +2,8 @@ import { DataTypes, Model, ModelStatic } from 'sequelize';
 import db from '@database';
 
 export interface IUser extends Model {
-  id: string;
+  id: number;
+  user_no: number;
   email: string;
   email_verified: boolean;
   phone_number: string;
@@ -20,7 +21,7 @@ const User = db.sequelize?.define<IUser>(
   'User',
   {
     id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       primaryKey: true,
       allowNull: false,
       unique: true,

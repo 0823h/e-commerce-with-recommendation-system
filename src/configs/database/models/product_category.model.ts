@@ -5,7 +5,7 @@ import Category from './category.model';
 
 export interface IProductCategory extends Model {
   id: string;
-  product_id: string;
+  product_id: number;
   category_id: string;
   deletedAt: Date;
   createdAt: Date;
@@ -22,7 +22,7 @@ const ProductCategory = db.sequelize?.define<IProductCategory>(
       unique: true,
     },
     product_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       references: {
         model: Product,
         key: 'id',

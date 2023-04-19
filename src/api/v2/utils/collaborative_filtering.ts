@@ -1,43 +1,58 @@
 import Feedback, { IFeedback } from '@src/configs/database/models/feedback.model';
+import User, { IUser } from '@src/configs/database/models/user.model';
+import Product, { IProduct } from '@src/configs/database/models/product.model';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import nj from 'numjs';
 import { ModelStatic } from 'sequelize';
+import Matrix from './matrix';
+import { IQuery } from '../modules/products/product.interface';
+import { HttpException } from './http-exception';
 
-// class CF {
-//   private readonly feedbackModel: ModelStatic<IFeedback>;
+class CF {
+  private readonly feedbackModel: ModelStatic<IFeedback>;
+  private readonly userModel: ModelStatic<IUser>;
+  private readonly productModel: ModelStatic<IProduct>;
+  private n_users: number;
+  private n_products: number;
 
-//   constructor() {
-//     this.feedbackModel = Feedback;
-//   }
-
-//   addRow =
-//   // eslint-disable-next-line class-methods-use-this
-//   initmatrix = async () => {
-//     const Y_data: string[][];
-//     Y_data = Y_data.concat([1, 2, 3]);
-//   };
-// }
-
-class Matrix {
-  private matrix_data: string[][];
-
-  constructor() {
-    this.matrix_data = [];
+  constructor(n_users: number, n_products: number) {
+    this.feedbackModel = Feedback;
+    this.userModel = User;
+    this.productModel = Product;
+    this.n_users = n_users;
+    this.n_products = n_products;
   }
 
-  addRow = (new_data: string[]) => {
-    this.matrix_data = this.matrix_data.concat(new_data);
-  };
-
-  getNRows = (): number => {
-    return this.matrix_data.length;
-  };
-
-  getNColumns = (): number => {
-    if (this.matrix_data.length === 0) {
-      return 0;
+  // eslint-disable-next-line class-methods-use-this
+  initmatrix = async () => {
+    const feedbacks = await this.feedbackModel.findAll();
+    if (!feedbacks) {
+      throw new HttpException('Cannot get feedbacks for CF', 409);
     }
-    return this.matrix_data[0].length;
+
+    const user_query: IQuery = {
+      order: [['id', 'ASC']],
+    };
+
+    const users = await this.userModel.findAll(user_query);
+    if (!users) {
+      throw new HttpException('Cannot get users for CF', 409);
+    }
+
+    console.log('n_users: ', this.n_users);
+
+    const Y_data = new Matrix();
+
+    for (let i = 0; i < this.n_users; i += 1) {
+      for (let j = 0; j < feedbacks.length; j += 1) {
+        if (feedbacks[j].user_id === users[i].id) {
+          Y_data.setElement(i, feedbacks[j].product_id, feedbacks[j].rate);
+        }
+      }
+    }
+
+    console.log(Y_data);
   };
 }
+
 export default CF;

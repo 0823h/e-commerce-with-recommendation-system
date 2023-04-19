@@ -2,7 +2,8 @@ import { DataTypes, Model, ModelStatic } from 'sequelize';
 import db from '@database';
 
 export interface IProduct extends Model {
-  id: string;
+  id: number;
+  product_no: number;
   name: string;
   description: string;
   images: string[];
@@ -19,7 +20,7 @@ const Product = db.sequelize?.define<IProduct>(
   'Product',
   {
     id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       primaryKey: true,
       allowNull: false,
       unique: true,

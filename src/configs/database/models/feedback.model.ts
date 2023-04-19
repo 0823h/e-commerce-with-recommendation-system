@@ -5,8 +5,8 @@ import Product, { IProduct } from './product.model';
 
 export interface IFeedback extends Model {
   id: string;
-  user_id: string;
-  product_id: string;
+  user_id: number;
+  product_id: number;
   rate: number;
   number_of_click: number;
   deletedAt: Date;
@@ -24,14 +24,14 @@ const Feedback = db.sequelize?.define<IFeedback>(
       unique: true,
     },
     user_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: {
         model: User,
       },
     },
     product_id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
       references: {
         model: Product,

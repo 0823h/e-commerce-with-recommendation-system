@@ -9,6 +9,7 @@ import { Request as JWTRequest } from 'express-jwt';
 import { HttpException } from '../../utils/http-exception';
 import { IQuery } from './product.interface';
 import { objectId } from '../../utils/functions';
+import CF from '../../utils/collaborative_filtering';
 
 class ProductService {
   private readonly productModel: ModelStatic<IProduct>;
@@ -56,9 +57,9 @@ class ProductService {
 
   createProduct = async (req: JWTRequest): Promise<IProduct> => {
     try {
-      const id = objectId();
+      const n_products = (await this.productModel.findAndCountAll()).count;
       const product = await this.productModel.create({
-        id,
+        id: n_products,
         ...req.body,
       });
 
@@ -72,6 +73,7 @@ class ProductService {
         const createCategoryPromises = category_ids.map(async (category_id: string) => {
           const category = await this.categoryModel.findByPk(category_id);
           if (category) {
+            console.log(n_products);
             await this.productCategoryModel.create({
               id: objectId(),
               product_id: product.id,
@@ -119,6 +121,18 @@ class ProductService {
       feedback.rate = req.body.rate;
       await feedback.save();
       return feedback;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+
+  collaborativeFiltering = async () => {
+    try {
+      const n_users = (await this.userModel.findAndCountAll()).count;
+      const n_products = (await this.productModel.findAndCountAll()).count;
+      const cf = new CF(n_users, n_products);
+      cf.initmatrix();
     } catch (error) {
       console.log(error);
       throw error;

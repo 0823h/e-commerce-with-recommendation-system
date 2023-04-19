@@ -1,12 +1,12 @@
 class Matrix {
-  private matrix_data: string[][];
+  private matrix_data: number[][];
 
   constructor() {
     this.matrix_data = [];
   }
 
-  addRow = (new_data: string[]) => {
-    this.matrix_data = this.matrix_data.concat(new_data);
+  addRow = (new_data: number[]) => {
+    this.matrix_data = this.matrix_data.concat([new_data]);
   };
 
   getNRows = (): number => {
@@ -18,6 +18,14 @@ class Matrix {
       return 0;
     }
     return this.matrix_data[0].length;
+  };
+
+  getData = (): number[][] => {
+    return this.matrix_data;
+  };
+
+  setElement = (column: number, row: number, value: number) => {
+    this.matrix_data[row][column] = value;
   };
 }
 

@@ -46,6 +46,19 @@ class ProductController {
       return next(error);
     }
   };
+
+  collaborativeFiltering = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      await this.productService.collaborativeFiltering();
+      return res.status(200).json({
+        status: 200,
+        message: 'Success',
+        data: null,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  };
 }
 
 export default ProductController;
