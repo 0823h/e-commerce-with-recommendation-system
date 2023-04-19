@@ -1,9 +1,10 @@
 import { DataTypes, Model, ModelStatic } from 'sequelize';
 import db from '@database';
-import { IUser } from './user.model';
-import { IProduct } from './product.model';
+import User, { IUser } from './user.model';
+import Product, { IProduct } from './product.model';
 
 export interface IFeedback extends Model {
+  id: string;
   user_id: string;
   product_id: string;
   rate: number;
@@ -16,17 +17,25 @@ export interface IFeedback extends Model {
 const Feedback = db.sequelize?.define<IFeedback>(
   'Feedback',
   {
+    id: {
+      type: DataTypes.STRING,
+      primaryKey: true,
+      allowNull: false,
+      unique: true,
+    },
     user_id: {
       type: DataTypes.STRING,
       allowNull: false,
-      primaryKey: true,
-      unique: true,
+      references: {
+        model: User,
+      },
     },
     product_id: {
       type: DataTypes.STRING,
       allowNull: false,
-      primaryKey: true,
-      unique: true,
+      references: {
+        model: Product,
+      },
     },
     rate: {
       type: DataTypes.FLOAT,

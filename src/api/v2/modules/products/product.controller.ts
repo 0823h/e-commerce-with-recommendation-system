@@ -11,10 +11,10 @@ class ProductController {
 
   getAllProducts = async (req: JWTRequest, res: Response, next: NextFunction) => {
     try {
-      const products = this.productService.getAllProducts(req);
+      const products = await this.productService.getAllProducts(req);
       return res.status(200).json({
         message: 'success',
-        products,
+        data: products.rows,
       });
     } catch (error) {
       return next(error);

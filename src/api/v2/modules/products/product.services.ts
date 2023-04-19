@@ -31,7 +31,7 @@ class ProductService {
       const orderBy: string = (req.query.orderBy as string) || 'createdAt';
 
       const query: IQuery = {
-        where: { deleted: false },
+        // where: { deleted: false },
         order: [[`${orderBy}`, `${(sort as string).toUpperCase()}`]],
       };
 
@@ -41,6 +41,7 @@ class ProductService {
       }
 
       const products = await this.productModel.findAndCountAll(query);
+      // console.log(products);
 
       if (!products) {
         throw new HttpException('Product not found', 404);
@@ -98,18 +99,25 @@ class ProductService {
       }
 
       // Product id
-      const { product_id } = req.params;
+      const product_id = req.params.id;
       const product = await this.productModel.findByPk(product_id);
       if (!product) {
         throw new HttpException('Product not found', 404);
       }
 
-      const feedback = this.feedbackModel.create({
-        user_id,
-        product_id,
-        ...req.body,
-      });
+      const feedback = await this.feedbackModel.findOne({ where: { user_id, product_id } });
+      if (!feedback) {
+        const feedback = await this.feedbackModel.create({
+          id: objectId(),
+          user_id,
+          product_id,
+          ...req.body,
+        });
+        return feedback;
+      }
 
+      feedback.rate = req.body.rate;
+      await feedback.save();
       return feedback;
     } catch (error) {
       console.log(error);
