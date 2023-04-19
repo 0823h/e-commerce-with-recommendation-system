@@ -41,7 +41,7 @@ class CF {
 
     console.log('n_users: ', this.n_users);
 
-    const Y_data = new Matrix();
+    const Y_data = new Matrix(this.n_users, this.n_products);
 
     for (let i = 0; i < this.n_users; i += 1) {
       for (let j = 0; j < feedbacks.length; j += 1) {
