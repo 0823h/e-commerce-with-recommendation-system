@@ -2,6 +2,8 @@ import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import os from 'os';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import * as math from 'mathjs';
 import { HttpException } from './http-exception';
 
 export const objectId = () => {
@@ -72,4 +74,23 @@ export const bcryptComparePassword = (rawPassword: string, hashedPassword: strin
       return resolve(data);
     });
   });
+};
+
+export const checkZeroArray = (array: number[]): boolean => {
+  let flag = true;
+  array.forEach((element) => {
+    if (element !== 0) {
+      flag = false;
+    }
+  });
+
+  return flag;
+};
+
+export const cosine_similarity = (a: number[], b: number[]): number => {
+  if (checkZeroArray(a) === true || checkZeroArray(b) === true) {
+    console.log('zero!!');
+    return math.dot(a, b) / (Number(math.norm(a)) * Number(math.norm(b)) + 1e-10);
+  }
+  return math.dot(a, b) / (Number(math.norm(a)) * Number(math.norm(b)));
 };

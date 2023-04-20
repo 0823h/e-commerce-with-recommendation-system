@@ -127,11 +127,16 @@ class ProductService {
     }
   };
 
-  collaborativeFiltering = async () => {
+  collaborativeFiltering = async (req: JWTRequest) => {
     try {
+      const { user_id } = (<JwtPayload>req.auth).data;
+      const user = await this.userModel.findByPk(user_id);
+      if (!user) {
+        throw new HttpException('User not found', 403);
+      }
       const n_users = (await this.userModel.findAndCountAll()).count;
       const n_products = (await this.productModel.findAndCountAll()).count;
-      const cf = new CF(n_users, n_products);
+      const cf = new CF(n_users, n_products, user_id);
       cf.initmatrix();
     } catch (error) {
       console.log(error);

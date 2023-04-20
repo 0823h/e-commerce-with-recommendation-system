@@ -49,7 +49,7 @@ class ProductController {
 
   collaborativeFiltering = async (req: JWTRequest, res: Response, next: NextFunction) => {
     try {
-      await this.productService.collaborativeFiltering();
+      await this.productService.collaborativeFiltering(req);
       return res.status(200).json({
         status: 200,
         message: 'Success',
