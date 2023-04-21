@@ -62,7 +62,11 @@ class AuthService {
         throw new HttpException('Please verify your email', 409);
       }
 
-      const token = await generateToken(`${process.env.ACCESS_TOKEN_SECRET_KEY}`, { user_id: user.id }, '30m');
+      const token = await generateToken(
+        `${process.env.ACCESS_TOKEN_SECRET_KEY}`,
+        { user_id: user.id },
+        `${process.env.ACCESS_TOKEN_TIME_EXPIRED}`
+      );
 
       return { user, access_token: token };
     } catch (error) {

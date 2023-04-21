@@ -137,7 +137,24 @@ class ProductService {
       const n_users = (await this.userModel.findAndCountAll()).count;
       const n_products = (await this.productModel.findAndCountAll()).count;
       const cf = new CF(n_users, n_products, user_id);
-      cf.initmatrix();
+      const product_suggested_ids = await cf.runCF();
+
+      console.log('product_suggested_ids: ', product_suggested_ids);
+
+      const product_suggested_ids_postive: number[][] = [];
+
+      product_suggested_ids.forEach((id) => {
+        if (id[1] > 0) {
+          product_suggested_ids_postive.push(id);
+        }
+      });
+
+      const products_promise = product_suggested_ids_postive.map(async (product_id) => {
+        return await this.productModel.findByPk(product_id[0]);
+      });
+
+      const products = await Promise.all(products_promise);
+      return products;
     } catch (error) {
       console.log(error);
       throw error;
