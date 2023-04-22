@@ -75,7 +75,7 @@ class CF {
 
   predict = (Y_data: Matrix, Y_bar_data: Matrix, product_id: number) => {
     const users_ids_who_rate_product = Y_data.getUsersWhoRateProduct(this.user_id, product_id);
-    console.log('userid who rate: ', users_ids_who_rate_product);
+    console.log(`userid who rate product ${product_id}`, users_ids_who_rate_product);
 
     const similarity_vector: number[][] = nj
       .zeros([users_ids_who_rate_product.length, 2])
@@ -104,6 +104,7 @@ class CF {
     let similarity_total = 0;
 
     const m_users = Y_data.getMeanUsers().tolist();
+    console.log('---------------------------------------------------------------------');
     console.log('m_users: ', m_users);
     for (let i = 0; i < this.k; i += 1) {
       predict_value += m_users[similarity_vector[i][0]] * similarity_vector[i][1];
@@ -113,6 +114,8 @@ class CF {
       similarity_total += Math.abs(similarity_vector[i][1]);
     }
     console.log('p_v: ', predict_value, 's_t: ', similarity_total);
+    console.log(predict_value / (similarity_total + 1e-10));
+    console.log('---------------------------------------------------------------------');
     return predict_value / (similarity_total + 1e-10);
   };
 
@@ -121,21 +124,21 @@ class CF {
     // console.log(a);
 
     const Y_data = await this.loadYData();
-    console.log('row:', Y_data.getRow(4).toJSON());
-    console.log('col: ', Y_data.getColumn(0).toJSON());
+    // console.log('row:', Y_data.getRow(4).toJSON());
+    // console.log('col: ', Y_data.getColumn(0).toJSON());
 
-    console.log('m_users: ', Y_data.getMeanUsers().toJSON());
+    // console.log('m_users: ', Y_data.getMeanUsers().toJSON());
 
-    console.log('Y_bar_data: ');
+    // console.log('Y_bar_data: ');
     const Y_bar_data = Y_data.getYbar();
     Y_bar_data.print();
 
     // console.log(Y_bar_data.getColumn(1).tolist());
     // console.log(Y_bar_data.getColumn(2).tolist());
-    const distant = cosine_similarity(Y_bar_data.getColumn(0).tolist(), Y_bar_data.getColumn(2).tolist());
+    // const distant = cosine_similarity(Y_bar_data.getColumn(0).tolist(), Y_bar_data.getColumn(2).tolist());
 
-    console.log(distant);
-    console.log(Y_data.getUsersWhoRateProduct(this.user_id, 1));
+    // console.log(distant);
+    // console.log(Y_data.getUsersWhoRateProduct(this.user_id, 1));
     console.log('Product not rate: ', Y_data.getProductsNotRateYet(this.user_id));
 
     // const predict_product = nj.zeros(this.n_products);
@@ -143,7 +146,7 @@ class CF {
     const products_not_rated_yet_ids = Y_data.getProductsNotRateYet(this.user_id);
     const suggest_products: number[][] = [];
     products_not_rated_yet_ids.forEach((product_id) => {
-      console.log(this.predict(Y_data, Y_bar_data, product_id));
+      // console.log(this.predict(Y_data, Y_bar_data, product_id));
       suggest_products.push([product_id, this.predict(Y_data, Y_bar_data, product_id)]);
     });
 
