@@ -94,8 +94,9 @@ class CF {
       return b[1] - a[1];
     });
 
-    console.log('sorted sv: ', similarity_vector);
+    console.log('sorted sv: ', similarity_vector, ' of: ', product_id);
 
+    const k_reserved = this.k;
     if (this.k > similarity_vector.length) {
       this.k = similarity_vector.length;
     }
@@ -106,13 +107,18 @@ class CF {
     const m_users = Y_data.getMeanUsers().tolist();
     console.log('---------------------------------------------------------------------');
     console.log('m_users: ', m_users);
+    console.log('s_v length: ', similarity_vector.length, similarity_vector);
+    console.log('k: ', this.k);
     for (let i = 0; i < this.k; i += 1) {
-      predict_value += m_users[similarity_vector[i][0]] * similarity_vector[i][1];
-      console.log(`m_users[similarity_vector[${i}][0]]: `, m_users[similarity_vector[i][0]]);
+      const user_normalize_rate = Y_bar_data.getColumn(similarity_vector[i][0]).tolist()[product_id];
+      predict_value += user_normalize_rate * similarity_vector[i][1];
+      console.log(`user_normalize_rate: `, user_normalize_rate);
       console.log(`similarity_vector[${i}][1]: `, similarity_vector[i][1]);
       console.log(`Math.abs(similarity_vector[${i}][1])`, Math.abs(similarity_vector[i][1]));
       similarity_total += Math.abs(similarity_vector[i][1]);
     }
+
+    this.k = k_reserved;
     console.log('p_v: ', predict_value, 's_t: ', similarity_total);
     console.log(predict_value / (similarity_total + 1e-10));
     console.log('---------------------------------------------------------------------');

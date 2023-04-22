@@ -136,7 +136,7 @@ class ProductService {
       }
       const n_users = (await this.userModel.findAndCountAll()).count;
       const n_products = (await this.productModel.findAndCountAll()).count;
-      const cf = new CF(n_users, n_products, user_id);
+      const cf = new CF(n_users, n_products, user_id, 2);
       const product_suggested_ids = await cf.runCF();
 
       console.log('product_suggested_ids: ', product_suggested_ids);
