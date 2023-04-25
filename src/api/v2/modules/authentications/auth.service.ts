@@ -1,14 +1,17 @@
-import { ModelStatic, Op } from 'sequelize';
+import { Model, ModelStatic, Op } from 'sequelize';
 import User, { IUser } from '@src/configs/database/models/user.model';
+import Cart, { ICart } from '@src/configs/database/models/cart.model';
 import { IAuthLogin, IAuthRegister } from './auth.interface';
 import { HttpException } from '../../utils/http-exception';
 import { bcryptComparePassword, bcryptHashPassword, generateToken, objectId } from '../../utils/functions';
 
 class AuthService {
   private readonly userModel: ModelStatic<IUser>;
+  private readonly cartModel: ModelStatic<ICart>;
 
   constructor() {
     this.userModel = User;
+    this.cartModel = Cart;
   }
 
   register = async (payload: IAuthRegister): Promise<IUser> => {
@@ -23,11 +26,8 @@ class AuthService {
       });
 
       if (user_existed) {
-        // console.log('Go 1');
-
         throw new HttpException('Email or Phone number has been already taken', 400);
       }
-      // console.log('Go 2');
       const n_users = (await this.userModel.findAndCountAll()).count;
       const hashPassword: string = await bcryptHashPassword(<string>payload.password);
       const user = await this.userModel.create({
@@ -35,6 +35,18 @@ class AuthService {
         password: hashPassword,
         id: n_users,
       });
+      if (!user) {
+        throw new HttpException('Cannot create user', 409);
+      }
+
+      // Create cart
+      // const user_cart = await this.cartModel.create({
+      //   user_id: user.id,
+      // });
+
+      // if (!user_cart) {
+      //   throw new HttpException('Cannot create cart for user', 409);
+      // }
 
       return user;
     } catch (error) {
@@ -67,6 +79,22 @@ class AuthService {
         { user_id: user.id },
         `${process.env.ACCESS_TOKEN_TIME_EXPIRED}`
       );
+
+      // create cart if not exist
+      const cart = await this.cartModel.findOne({
+        where: {
+          user_id: user.id,
+        },
+      });
+
+      if (!cart) {
+        const user_cart = await this.cartModel.create({
+          user_id: user.id,
+        });
+        if (!user_cart) {
+          throw new HttpException('Cart not found', 404);
+        }
+      }
 
       return { user, access_token: token };
     } catch (error) {

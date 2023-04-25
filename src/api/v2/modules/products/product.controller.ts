@@ -21,6 +21,17 @@ class ProductController {
     }
   };
 
+  getProductForUser = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const product = await this.productService.getProduct(req);
+      return res.status(200).json({
+        message: 'success',
+        data: product,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  };
   createProduct = async (req: JWTRequest, res: Response, next: NextFunction) => {
     try {
       const product = await this.productService.createProduct(req);

@@ -55,6 +55,22 @@ class ProductService {
     }
   };
 
+  getProduct = async (req: JWTRequest): Promise<IProduct> => {
+    try {
+      const { id } = req.params;
+
+      const product = await this.productModel.findByPk(id);
+      if (!product) {
+        throw new HttpException('Product not found', 404);
+      }
+
+      return product;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+
   createProduct = async (req: JWTRequest): Promise<IProduct> => {
     try {
       const n_products = (await this.productModel.findAndCountAll()).count;
