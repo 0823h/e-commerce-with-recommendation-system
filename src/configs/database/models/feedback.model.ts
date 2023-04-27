@@ -7,6 +7,7 @@ export interface IFeedback extends Model {
   id: string;
   user_id: number;
   product_id: number;
+  session_id: number;
   rate: number;
   number_of_click: number;
   deletedAt: Date;
@@ -25,10 +26,6 @@ const Feedback = db.sequelize?.define<IFeedback>(
     },
     user_id: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: User,
-      },
     },
     product_id: {
       type: DataTypes.INTEGER,

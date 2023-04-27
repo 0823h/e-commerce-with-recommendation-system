@@ -21,13 +21,13 @@ const associate = async (): Promise<void> => {
   Product.hasMany(Feedback, { foreignKey: 'product_id', onDelete: 'CASCADE', hooks: true });
 
   // User
-  User.hasMany(Feedback, { foreignKey: 'user_id', onDelete: 'CASCADE', hooks: true });
+  // User.hasMany(Feedback, { foreignKey: 'user_id', onDelete: 'CASCADE', hooks: true });
 
   // Feedback
-  Feedback.belongsTo(User, {
-    foreignKey: 'user_id',
-    targetKey: 'id',
-  });
+  // Feedback.belongsTo(User, {
+  //   foreignKey: 'user_id',
+  //   targetKey: 'id',
+  // });
 
   Feedback.belongsTo(Product, {
     foreignKey: 'product_id',

@@ -1,5 +1,6 @@
 import cookieParser from 'cookie-parser';
 import express, { NextFunction, Request, Response } from 'express';
+import session from 'express-session';
 import morgan from 'morgan';
 import routes from '@src/api/v2/modules';
 
@@ -39,6 +40,22 @@ app.use(
 );
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
+
+// Session
+app.enable('trust proxy');
+app.use(
+  session({
+    secret: 'street',
+    resave: true,
+    saveUninitialized: true,
+    proxy: true,
+    cookie: {
+      sameSite: 'none',
+      secure: true,
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+    },
+  })
+);
 
 app.use('/api/v2', routes);
 

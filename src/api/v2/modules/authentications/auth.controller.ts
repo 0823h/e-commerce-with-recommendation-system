@@ -13,7 +13,7 @@ class AuthController {
       const user = await this.authService.register(req.body);
 
       // console.log('GO 3');
-      return res.status(200).json({
+      return res.status(201).json({
         status: 201,
         message: 'Success',
         data: user,
