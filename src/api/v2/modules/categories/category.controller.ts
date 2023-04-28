@@ -12,9 +12,26 @@ class CategoryController {
   getAllCategory = async (req: JWTRequest, res: Response, next: NextFunction) => {
     try {
       const categories = await this.categoryService.getAllCategories(req);
+
+      const page = parseInt(req.query.page as string, 10) || 1;
+      const limit = parseInt(req.query.limit as string, 10) || 10;
+
+      const page_count = categories.rows.length;
+      const total_pages = Math.ceil(categories.count / limit);
+      const total_count = categories.count;
+
       return res.status(200).json({
         message: 'success',
-        data: categories.rows,
+        data: {
+          records: categories.rows,
+          metadata: {
+            page,
+            limit,
+            page_count,
+            total_pages,
+            total_count,
+          },
+        },
       });
     } catch (error) {
       return next(error);

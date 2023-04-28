@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { schema, validate } from 'express-validation';
 import AuthController from './auth.controller';
-import AuthService from './auth.service';
+import AuthService from './auth.services';
 import { authLoginBody, authRegisterBody } from './auth.validate';
 
 const authService = new AuthService();
