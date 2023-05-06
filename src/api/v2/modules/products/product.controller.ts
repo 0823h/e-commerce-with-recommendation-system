@@ -88,6 +88,19 @@ class ProductController {
       return next(error);
     }
   };
+
+  createVariant = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const variant = await this.productService.createVariant(req);
+      return res.status(200).json({
+        status: 200,
+        message: 'Success',
+        data: variant,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  };
 }
 
 export default ProductController;

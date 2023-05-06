@@ -17,3 +17,11 @@ export const productRateBody = {
     rate: Joi.number().required(),
   }),
 };
+
+export const variantCreateBody = {
+  body: Joi.object({
+    quantity: Joi.number().required(),
+    size: Joi.string().required(),
+    colour: Joi.string().required(),
+  }),
+};

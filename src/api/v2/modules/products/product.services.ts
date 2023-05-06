@@ -3,6 +3,7 @@ import Category, { ICategory } from '@src/configs/database/models/category.model
 import ProductCategory, { IProductCategory } from '@src/configs/database/models/product_category.model';
 import Feedback, { IFeedback } from '@src/configs/database/models/feedback.model';
 import User, { IUser } from '@src/configs/database/models/user.model';
+import Variant, { IVariant } from '@src/configs/database/models/variant.model';
 import { ModelStatic } from 'sequelize';
 import { JwtPayload } from 'jsonwebtoken';
 import { Request as JWTRequest } from 'express-jwt';
@@ -17,12 +18,14 @@ class ProductService {
   private readonly categoryModel: ModelStatic<ICategory>;
   private readonly feedbackModel: ModelStatic<IFeedback>;
   private readonly userModel: ModelStatic<IUser>;
+  private readonly variantModel: ModelStatic<IVariant>;
   constructor() {
     this.productModel = Product;
     this.productCategoryModel = ProductCategory;
     this.categoryModel = Category;
     this.feedbackModel = Feedback;
     this.userModel = User;
+    this.variantModel = Variant;
   }
 
   getAllProducts = async (req: JWTRequest): Promise<{ rows: IProduct[]; count: number }> => {
@@ -55,7 +58,7 @@ class ProductService {
     }
   };
 
-  getProduct = async (req: JWTRequest): Promise<IProduct> => {
+  getProduct = async (req: JWTRequest): Promise<IVariant[]> => {
     try {
       const { id } = req.params;
 
@@ -64,7 +67,12 @@ class ProductService {
         throw new HttpException('Product not found', 404);
       }
 
-      return product;
+      const variants = await this.variantModel.findAll({ where: { product_id: id }, group: 'size' });
+      if (!product) {
+        throw new HttpException('Product not found', 404);
+      }
+
+      return variants;
     } catch (error) {
       console.log(error);
       throw error;
@@ -174,6 +182,26 @@ class ProductService {
     } catch (error) {
       console.log(error);
       throw error;
+    }
+  };
+
+  createVariant = async (req: JWTRequest) => {
+    try {
+      const product_id = req.params.id;
+      const product = await this.productModel.findByPk(product_id);
+      if (!product) {
+        throw new HttpException('Product not found', 404);
+      }
+
+      const variant = await this.variantModel.create({
+        product_id,
+        ...req.body,
+      });
+
+      return variant;
+    } catch (err) {
+      console.log(err);
+      throw err;
     }
   };
 }

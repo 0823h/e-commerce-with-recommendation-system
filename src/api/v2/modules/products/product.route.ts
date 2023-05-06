@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { schema, validate } from 'express-validation';
 import ProductController from './product.controller';
 import ProductService from './product.services';
-import { productCreateBody, productRateBody } from './product.validate';
+import { productCreateBody, productRateBody, variantCreateBody } from './product.validate';
 import { auth } from '../../middlewares/auth.middleware';
 
 const productService = new ProductService();
@@ -12,6 +12,7 @@ const ProductRoute = Router();
 
 ProductRoute.get('/cf', auth, productController.collaborativeFiltering);
 ProductRoute.get('/:id', productController.getProductForUser);
+ProductRoute.post('/:id', validate(variantCreateBody as schema), productController.createVariant);
 ProductRoute.post('/:id/rate', auth, validate(productRateBody as schema), productController.rateProduct);
 ProductRoute.get('/', productController.getAllProducts);
 ProductRoute.post('/', validate(productCreateBody as schema), productController.createProduct);
