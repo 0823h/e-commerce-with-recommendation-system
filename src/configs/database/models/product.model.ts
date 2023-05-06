@@ -8,7 +8,8 @@ export interface IProduct extends Model {
   description: string;
   images: string[];
   rating: number;
-  price: number;
+  original_price: number;
+  current_price: number;
   quantity: number;
   sold_amount: number;
   deletedAt: Date;
@@ -29,6 +30,8 @@ const Product = db.sequelize?.define<IProduct>(
     description: DataTypes.STRING,
     images: DataTypes.ARRAY(DataTypes.STRING),
     rating: { type: DataTypes.FLOAT, defaultValue: 0 },
+    original_price: { type: DataTypes.FLOAT, defaultValue: 0 },
+    current_price: { type: DataTypes.FLOAT, defaultValue: 0 },
     quantity: { type: DataTypes.INTEGER, defaultValue: 0 },
     sold_amount: { type: DataTypes.INTEGER, defaultValue: 0 },
   },

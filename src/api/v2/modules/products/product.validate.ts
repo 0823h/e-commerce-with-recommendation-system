@@ -5,6 +5,8 @@ export const productCreateBody = {
     name: Joi.string().required(),
     description: Joi.string().optional(),
     images: Joi.array().items(Joi.string().required()).optional(),
+    original_price: Joi.array().required(),
+    current_price: Joi.array().required(),
     quantity: Joi.number().min(0).required(),
     categories: Joi.array().items(Joi.string().optional()).optional(),
   }),

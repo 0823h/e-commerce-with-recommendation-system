@@ -65,7 +65,7 @@ class CartService {
           product_id,
           cart_id: cart.id,
           quantity,
-          cart_price: product.price,
+          cart_price: product.current_price,
         });
         if (!cartItem) {
           throw new HttpException('Cannot add item to cart', 409);

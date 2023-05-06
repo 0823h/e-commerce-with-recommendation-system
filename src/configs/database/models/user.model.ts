@@ -27,7 +27,7 @@ const User = db.sequelize?.define<IUser>(
       unique: true,
     },
     email: DataTypes.STRING,
-    email_verified: { type: DataTypes.BOOLEAN, defaultValue: false },
+    email_verified: { type: DataTypes.BOOLEAN, defaultValue: true },
     phone_number: DataTypes.STRING,
     phone_number_verified: { type: DataTypes.BOOLEAN, defaultValue: false },
     password: DataTypes.STRING,
