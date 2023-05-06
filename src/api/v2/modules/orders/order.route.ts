@@ -9,6 +9,6 @@ const orderController = new OrderController(orderService);
 const OrderRoute = Router();
 
 OrderRoute.post('/', orderController.createOrder);
-OrderRoute.get('/train', orderController.trainModel);
+// OrderRoute.get('/train', orderController.trainModel);
 
 export default OrderRoute;

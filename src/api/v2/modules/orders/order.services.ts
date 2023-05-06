@@ -1,7 +1,7 @@
 import Order, { IOrder } from '@models/order.model';
 import { ModelStatic } from 'sequelize';
 import { Request as JWTRequest } from 'express-jwt';
-import { training } from '../../utils/predict_freud_order';
+// import { training } from '../../utils/predict_freud_order';
 
 class OrderService {
   private readonly orderModel: ModelStatic<IOrder>;
@@ -20,14 +20,14 @@ class OrderService {
     }
   };
 
-  trainModel = async (req: JWTRequest) => {
-    try {
-      await training();
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  };
+  // trainModel = async (req: JWTRequest) => {
+  //   try {
+  //     await training();
+  //   } catch (error) {
+  //     console.log(error);
+  //     throw error;
+  //   }
+  // };
 }
 
 export default OrderService;
