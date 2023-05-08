@@ -3,7 +3,7 @@ import { Request as JWTRequest } from 'express-jwt';
 import { JwtPayload } from 'jsonwebtoken';
 import { ModelStatic } from 'sequelize';
 import { HttpException } from '../../utils/http-exception';
-import { bcryptHashPassword } from '../../utils/functions';
+import { bcryptComparePassword, bcryptHashPassword, generateToken } from '../../utils/functions';
 
 class AdminService {
   private readonly adminModel: ModelStatic<IAdmin>;
@@ -34,6 +34,36 @@ class AdminService {
     } catch (error) {
       console.log(error);
       throw error;
+    }
+  };
+
+  signIn = async (req: JWTRequest): Promise<Object> => {
+    try {
+      // Check if username exist
+      const { username, password } = req.body;
+
+      const admin = await this.adminModel.findOne({ where: { username } });
+
+      if (!admin) {
+        throw new HttpException('Username not existed', 404);
+      }
+
+      const isPasswordValid = await bcryptComparePassword(password, admin.password);
+
+      if (!isPasswordValid) {
+        throw new HttpException('Password is not correct', 401);
+      }
+
+      const access_token = await generateToken(
+        `${process.env.ACCESS_TOKEN_SECRET_KEY}`,
+        { admin_id: admin.id, admin_role: admin.role },
+        `${process.env.ACCESS_TOKEN_TIME_EXPIRED}`
+      );
+
+      return { admin_id: admin.id, access_token };
+    } catch (err) {
+      console.log(err);
+      throw err;
     }
   };
 }

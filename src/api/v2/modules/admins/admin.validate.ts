@@ -8,3 +8,10 @@ export const createAdminBody = {
     full_name: Joi.string().required(),
   }),
 };
+
+export const signInBody = {
+  body: Joi.object({
+    username: Joi.string().required(),
+    password: Joi.string().required(),
+  }),
+};

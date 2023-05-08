@@ -20,6 +20,19 @@ class AdminController {
       return next(error);
     }
   };
+
+  signIn = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const data = await this.adminService.signIn(req);
+      return res.status(201).json({
+        status: 201,
+        message: 'success',
+        data,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  };
 }
 
 export default AdminController;
