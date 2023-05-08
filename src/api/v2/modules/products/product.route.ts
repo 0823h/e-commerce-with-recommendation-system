@@ -11,7 +11,7 @@ const productController = new ProductController(productService);
 const ProductRoute = Router();
 
 ProductRoute.get('/cf', auth, productController.collaborativeFiltering);
-ProductRoute.get('/:id', productController.getProductForUser);
+ProductRoute.get('/:id', productController.getVariantsOfProduct);
 ProductRoute.post('/:id', validate(variantCreateBody as schema), productController.createVariant);
 ProductRoute.post('/:id/rate', auth, validate(productRateBody as schema), productController.rateProduct);
 ProductRoute.get('/', productController.getAllProducts);

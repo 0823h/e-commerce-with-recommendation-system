@@ -4,7 +4,7 @@ import ProductCategory, { IProductCategory } from '@src/configs/database/models/
 import Feedback, { IFeedback } from '@src/configs/database/models/feedback.model';
 import User, { IUser } from '@src/configs/database/models/user.model';
 import Variant, { IVariant } from '@src/configs/database/models/variant.model';
-import { ModelStatic } from 'sequelize';
+import { ModelStatic, Op } from 'sequelize';
 import { JwtPayload } from 'jsonwebtoken';
 import { Request as JWTRequest } from 'express-jwt';
 import { HttpException } from '../../utils/http-exception';
@@ -36,6 +36,7 @@ class ProductService {
 
       const query: IQuery = {
         // where: { deleted: false },
+        include: [{ model: this.categoryModel }],
         order: [[`${orderBy}`, `${(sort as string).toUpperCase()}`]],
       };
 
@@ -43,6 +44,8 @@ class ProductService {
         query.offset = (parseInt(page as string, 10) - 1) * parseInt(limit as string, 10);
         query.limit = parseInt(limit as string, 10);
       }
+
+      console.log('query: ', query);
 
       const products = await this.productModel.findAndCountAll(query);
       // console.log(products);
@@ -58,16 +61,38 @@ class ProductService {
     }
   };
 
-  getProduct = async (req: JWTRequest): Promise<IVariant[]> => {
+  getVariantOfProduct = async (req: JWTRequest): Promise<{ rows: IVariant[]; count: number }> => {
     try {
       const { id } = req.params;
-
       const product = await this.productModel.findByPk(id);
       if (!product) {
         throw new HttpException('Product not found', 404);
       }
 
-      const variants = await this.variantModel.findAll({ where: { product_id: id }, group: 'size' });
+      const { page, limit, colour } = req.query;
+      const sort = req.query.sort || 'DESC';
+      const orderBy: string = (req.query.orderBy as string) || 'createdAt';
+
+      const query: IQuery = {
+        where: { product_id: id },
+        order: [[`${orderBy}`, `${(sort as string).toUpperCase()}`]],
+      };
+
+      if (page && limit) {
+        query.offset = (parseInt(page as string, 10) - 1) * parseInt(limit as string, 10);
+        query.limit = parseInt(limit as string, 10);
+      }
+
+      if (colour) {
+        query.where = {
+          ...query.where,
+          colour: { [Op.iLike]: `%${colour}%` },
+        };
+      }
+
+      console.log('Query: ', query);
+
+      const variants = await this.variantModel.findAndCountAll(query);
       if (!product) {
         throw new HttpException('Product not found', 404);
       }
@@ -188,14 +213,25 @@ class ProductService {
   createVariant = async (req: JWTRequest) => {
     try {
       const product_id = req.params.id;
+      const { quantity, size, colour } = req.body;
       const product = await this.productModel.findByPk(product_id);
       if (!product) {
         throw new HttpException('Product not found', 404);
       }
 
+      const existed_variant = await this.variantModel.findOne({
+        where: { [Op.and]: [{ size: size.toLowerCase() }, { colour: colour.toLowerCase() }] },
+      });
+
+      if (existed_variant) {
+        throw new HttpException('This variant for this product has already been defined', 401);
+      }
+
       const variant = await this.variantModel.create({
         product_id,
-        ...req.body,
+        quantity,
+        size: size.toLowerCase(),
+        colour: colour.toLowerCase(),
       });
 
       return variant;
