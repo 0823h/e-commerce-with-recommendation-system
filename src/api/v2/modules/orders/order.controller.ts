@@ -22,19 +22,19 @@ class OrderController {
     }
   };
 
-  // trainModel = async (req: JWTRequest, res: Response, next: NextFunction) => {
-  //   try {
-  //     await this.orderService.trainModel(req);
-  //     return res.status(200).json({
-  //       status: 200,
-  //       message: 'success',
-  //       data: null,
-  //     });
-  //   } catch (error) {
-  //     console.log(error);
-  //     return next(error);
-  //   }
-  // };
+  trainModel = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      await this.orderService.trainModel(req);
+      return res.status(200).json({
+        status: 200,
+        message: 'success',
+        data: null,
+      });
+    } catch (error) {
+      console.log(error);
+      return next(error);
+    }
+  };
 }
 
 export default OrderController;

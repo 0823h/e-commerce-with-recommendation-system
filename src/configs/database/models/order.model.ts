@@ -5,7 +5,8 @@ import User from './user.model';
 export interface IOrder extends Model {
   id: number;
   user_id: number;
-  order_amount: number;
+  total_order_amount: number;
+  price: number;
   address: string;
   is_fraud: boolean;
   deletedAt: Date;
@@ -26,8 +27,11 @@ const Order = db.sequelize?.define<IOrder>(
     user_id: {
       type: DataTypes.INTEGER,
     },
-    order_amount: {
+    total_order_amount: {
       type: DataTypes.INTEGER,
+    },
+    price: {
+      type: DataTypes.FLOAT,
     },
     address: {
       type: DataTypes.STRING,

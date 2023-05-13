@@ -119,6 +119,14 @@ class CartService {
       throw error;
     }
   };
+
+  order = (req: JWTRequest) => {
+    try {
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
 }
 
 export default CartService;
