@@ -3,7 +3,7 @@ import OrderItem, { IOrderItem } from '@models/order_item.model';
 import Product, { IProduct } from '@models/product.model';
 import { ModelStatic } from 'sequelize';
 import { Request as JWTRequest } from 'express-jwt';
-import { training } from '../../utils/predict_freud_order';
+import { decisionTree, training } from '../../utils/predict_freud_order';
 import { HttpException } from '../../utils/http-exception';
 
 class OrderService {
@@ -56,7 +56,9 @@ class OrderService {
 
   trainModel = async (req: JWTRequest) => {
     try {
-      await training();
+      const order_info: IOrder = req.body;
+      const is_fraud = await decisionTree(order_info);
+      return is_fraud;
     } catch (error) {
       console.log(error);
       throw error;

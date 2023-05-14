@@ -8,6 +8,8 @@ export interface IOrder extends Model {
   total_order_amount: number;
   price: number;
   address: string;
+  phone_number: string;
+  email: string;
   is_fraud: boolean;
   deletedAt: Date;
   createdAt: Date;
@@ -34,6 +36,12 @@ const Order = db.sequelize?.define<IOrder>(
       type: DataTypes.FLOAT,
     },
     address: {
+      type: DataTypes.STRING,
+    },
+    phone_number: {
+      type: DataTypes.STRING,
+    },
+    email: {
       type: DataTypes.STRING,
     },
     is_fraud: {
