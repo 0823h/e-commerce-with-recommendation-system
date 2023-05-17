@@ -219,13 +219,13 @@ class ProductService {
         throw new HttpException('Product not found', 404);
       }
 
-      const existed_variant = await this.variantModel.findOne({
-        where: { [Op.and]: [{ size }, { colour }] },
-      });
+      // const existed_variant = await this.variantModel.findOne({
+      //   where: { [Op.and]: [{ size }, { colour }] },
+      // });
 
-      if (existed_variant) {
-        throw new HttpException('This variant for this product has already been defined', 401);
-      }
+      // if (existed_variant) {
+      //   throw new HttpException('This variant for this product has already been defined', 401);
+      // }
 
       const variant = await this.variantModel.create({
         product_id,
