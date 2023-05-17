@@ -4,7 +4,8 @@ export const productCreateBody = {
   body: Joi.object({
     name: Joi.string().required(),
     description: Joi.string().optional(),
-    images: Joi.array().items(Joi.string().required()).optional(),
+    main_image: Joi.string().optional(),
+    sub_images: Joi.array().items(Joi.string().required()).optional(),
     original_price: Joi.number().min(1).required(),
     current_price: Joi.number().min(1).required(),
     quantity: Joi.number().min(0).required(),

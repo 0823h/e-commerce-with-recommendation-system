@@ -6,7 +6,8 @@ export interface IProduct extends Model {
   product_no: number;
   name: string;
   description: string;
-  images: string[];
+  main_image: string;
+  sub_images: string[];
   rating: number;
   original_price: number;
   current_price: number;
@@ -27,8 +28,9 @@ const Product = db.sequelize?.define<IProduct>(
       unique: true,
     },
     name: DataTypes.STRING,
-    description: DataTypes.STRING,
-    images: DataTypes.ARRAY(DataTypes.STRING),
+    description: DataTypes.TEXT,
+    main_image: DataTypes.STRING,
+    sub_images: DataTypes.ARRAY(DataTypes.STRING),
     rating: { type: DataTypes.FLOAT, defaultValue: 0 },
     original_price: { type: DataTypes.FLOAT, defaultValue: 0 },
     current_price: { type: DataTypes.FLOAT, defaultValue: 0 },

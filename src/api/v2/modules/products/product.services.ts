@@ -220,7 +220,7 @@ class ProductService {
       }
 
       const existed_variant = await this.variantModel.findOne({
-        where: { [Op.and]: [{ size: size.toLowerCase() }, { colour: colour.toLowerCase() }] },
+        where: { [Op.and]: [{ size }, { colour }] },
       });
 
       if (existed_variant) {
@@ -230,8 +230,8 @@ class ProductService {
       const variant = await this.variantModel.create({
         product_id,
         quantity,
-        size: size.toLowerCase(),
-        colour: colour.toLowerCase(),
+        size: size,
+        colour: colour,
       });
 
       return variant;
