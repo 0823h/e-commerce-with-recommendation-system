@@ -36,7 +36,7 @@ class ProductService {
 
       const query: IQuery = {
         // where: { deleted: false },
-        include: [{ model: this.categoryModel }],
+        include: [{ model: this.categoryModel, attributes: ['name'], through: { attributes: [] } }],
         order: [[`${orderBy}`, `${(sort as string).toUpperCase()}`]],
       };
 
@@ -48,7 +48,6 @@ class ProductService {
       console.log('query: ', query);
 
       const products = await this.productModel.findAndCountAll(query);
-      // console.log(products);
 
       if (!products) {
         throw new HttpException('Product not found', 404);
