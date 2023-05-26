@@ -239,6 +239,15 @@ class ProductService {
       throw err;
     }
   };
+
+  getAllProductOfCategory = async(req: JWTRequest) => {
+    try{
+      
+    }
+    catch(error) {
+      
+    }
+  }
 }
 
 export default ProductService;
