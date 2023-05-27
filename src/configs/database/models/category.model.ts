@@ -4,6 +4,7 @@ import db from '@database';
 export interface ICategory extends Model {
   id: string;
   name: string;
+  slug: string;
   description: string;
   deletedAt: Date;
   createdAt: Date;
@@ -20,6 +21,7 @@ const Category = db.sequelize?.define<ICategory>(
       unique: true,
     },
     name: DataTypes.STRING,
+    slug: DataTypes.STRING,
     description: DataTypes.STRING,
   },
   {

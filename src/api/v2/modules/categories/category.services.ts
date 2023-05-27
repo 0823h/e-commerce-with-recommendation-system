@@ -1,4 +1,5 @@
 import Category, { ICategory } from '@src/configs/database/models/category.model';
+import Product, { IProduct } from '@src/configs/database/models/product.model';
 import { ModelStatic } from 'sequelize';
 import { Request as JWTRequest } from 'express-jwt';
 import { HttpException } from '../../utils/http-exception';
@@ -7,9 +8,11 @@ import { objectId } from '../../utils/functions';
 
 class CategoryService {
   private readonly categoryModel: ModelStatic<ICategory>;
+  private readonly productModel: ModelStatic<IProduct>;
 
   constructor() {
     this.categoryModel = Category;
+    this.productModel = Product;
   }
 
   getAllCategories = async (req: JWTRequest): Promise<{ rows: ICategory[]; count: number }> => {
@@ -59,6 +62,15 @@ class CategoryService {
       throw error;
     }
   };
+
+  getCategoryProduct = async(req: JWTRequest) => {
+    try{
+      this.
+    } catch(err) {
+      console.log(err)
+      throw err
+    }
+  }
 }
 
 export default CategoryService;

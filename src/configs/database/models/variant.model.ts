@@ -3,7 +3,7 @@ import db from '@database';
 import Product from './product.model';
 
 export interface IVariant extends Model {
-  id: number;
+  id: string;
   product_id: number;
   size: string;
   colour: string;
@@ -15,10 +15,9 @@ export interface IVariant extends Model {
 
 const Variant = db.sequelize?.define<IVariant>('Variant', {
   id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     primaryKey: true,
     allowNull: false,
-    autoIncrement: true,
     unique: true,
   },
   product_id: {

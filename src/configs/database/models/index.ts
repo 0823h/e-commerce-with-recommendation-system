@@ -19,8 +19,8 @@ const associate = async (): Promise<void> => {
     through: ProductCategory,
     foreignKey: 'product_id',
   });
-  Product.hasMany(Feedback, { foreignKey: 'product_id', onDelete: 'CASCADE', hooks: true });
-  Product.hasMany(Variant, { foreignKey: 'product_id', onDelete: 'CASCADE' });
+  Product.hasMany(Feedback, { foreignKey: 'product_id', hooks: true });
+  Product.hasMany(Variant, { foreignKey: 'product_id' });
 
   // User
   // User.hasMany(Feedback, { foreignKey: 'user_id', onDelete: 'CASCADE', hooks: true });
