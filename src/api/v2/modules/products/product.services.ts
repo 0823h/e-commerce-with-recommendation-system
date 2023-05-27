@@ -227,11 +227,10 @@ class ProductService {
       // }
 
       const variant = await this.variantModel.create({
-        id: objectId(),
         product_id,
         quantity,
-        size,
-        colour,
+        size: size,
+        colour: colour,
       });
 
       return variant;
@@ -241,10 +240,14 @@ class ProductService {
     }
   };
 
-  // getAllProductOfCategory = async (req: JWTRequest) => {
-  //   try {
-  //   } catch (error) {}
-  // };
+  // getAllProductOfCategory = async(req: JWTRequest) => {
+  //   try{
+  //     const product = await this.productModel.findAll({where: {}})
+  //   }
+  //   catch(error) {
+
+  //   }
+  // }
 }
 
 export default ProductService;

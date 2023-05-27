@@ -49,6 +49,18 @@ class CategoryController {
       return next(error);
     }
   };
+
+  getCategoryProduct = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const product = await this.categoryService.getCategoryProduct(req);
+      return res.status(200).json({
+        message: 'success',
+        data: product,
+      });
+    } catch (err) {
+      return next(err);
+    }
+  };
 }
 
 export default CategoryController;

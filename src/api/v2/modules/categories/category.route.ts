@@ -10,6 +10,7 @@ const categoryController = new CategoryController(categoryService);
 const CategoryRoute = Router();
 
 CategoryRoute.get('/', categoryController.getAllCategory);
+CategoryRoute.get('/:category_id', categoryController.getCategoryProduct);
 CategoryRoute.post('/', validate(categoryCreateBody as schema), categoryController.createCategory);
 
 export default CategoryRoute;

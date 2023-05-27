@@ -63,14 +63,19 @@ class CategoryService {
     }
   };
 
-  getCategoryProduct = async(req: JWTRequest) => {
-    try{
-      this.
-    } catch(err) {
-      console.log(err)
-      throw err
+  getCategoryProduct = async (req: JWTRequest) => {
+    try {
+      const { category_id } = req.params;
+      const category = await this.categoryModel.findAll({
+        where: { id: category_id },
+        include: { model: Product, through: {} },
+      });
+      return category;
+    } catch (err) {
+      console.log(err);
+      throw err;
     }
-  }
+  };
 }
 
 export default CategoryService;
