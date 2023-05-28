@@ -68,7 +68,7 @@ class CategoryService {
       const { category_id } = req.params;
       const category = await this.categoryModel.findAll({
         where: { id: category_id },
-        include: { model: Product, through: {} },
+        include: { model: Product, through: { attributes: [] } },
       });
       return category;
     } catch (err) {
