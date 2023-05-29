@@ -60,7 +60,7 @@ class ProductService {
     }
   };
 
-  getVariantOfProduct = async (req: JWTRequest): Promise<{ rows: IVariant[]; count: number }> => {
+  getVariantOfProduct = async (req: JWTRequest): Promise<{ product: IProduct; rows: IVariant[]; count: number }> => {
     try {
       const { id } = req.params;
       const product = await this.productModel.findByPk(id);
@@ -96,7 +96,7 @@ class ProductService {
         throw new HttpException('Product not found', 404);
       }
 
-      return variants;
+      return { product, ...variants };
     } catch (error) {
       console.log(error);
       throw error;

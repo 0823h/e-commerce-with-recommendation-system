@@ -41,19 +41,23 @@ class ProductController {
 
   getVariantsOfProduct = async (req: JWTRequest, res: Response, next: NextFunction) => {
     try {
-      const variants = await this.productService.getVariantOfProduct(req);
+      const data = await this.productService.getVariantOfProduct(req);
+      console.log(data);
 
       const page = parseInt(req.query.page as string, 10) || 1;
       const limit = parseInt(req.query.limit as string, 10) || 10;
 
-      const page_count = variants.rows.length;
-      const total_pages = Math.ceil(variants.count / limit);
-      const total_count = variants.count;
+      const page_count = data.rows.length;
+      const total_pages = Math.ceil(data.count / limit);
+      const total_count = data.count;
 
       return res.status(200).json({
         message: 'success',
         data: {
-          records: variants.rows,
+          records: {
+            product: data.product,
+            variants: data.rows,
+          },
           metadata: {
             page,
             limit,
