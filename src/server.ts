@@ -7,7 +7,7 @@ const PORT = process.env.PORT || 8000;
 
 app.listen(PORT, async () => {
   try {
-    await db.sequelize?.sync({ force: false });
+    await db.sequelize?.sync({ alter: true });
     await models.associate?.();
     console.log('✅ Database connected!');
     console.log(`🚀 Server listening on port: ${PORT}`);

@@ -9,3 +9,10 @@ export const orderCreateBody = {
     ),
   }),
 };
+
+export const orderPayBody = {
+  body: Joi.object({
+    total_order_amount: Joi.string().required(),
+    price: Joi.number().required(),
+  }),
+};

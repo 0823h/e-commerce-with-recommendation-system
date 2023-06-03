@@ -5,8 +5,9 @@ export const authRegisterBody = {
     email: Joi.string().email().required(),
     phone_number: Joi.string().required(),
     password: Joi.string().required(),
-    first_name: Joi.string().optional(),
-    last_name: Joi.string().optional(),
+    first_name: Joi.string().required(),
+    last_name: Joi.string().required(),
+    address: Joi.string().required(),
   }),
 };
 

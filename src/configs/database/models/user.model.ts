@@ -12,6 +12,7 @@ export interface IUser extends Model {
   otp: string;
   first_name: string;
   last_name: string;
+  address: string;
   deletedAt: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -34,6 +35,7 @@ const User = db.sequelize?.define<IUser>(
     otp: DataTypes.STRING,
     first_name: DataTypes.STRING,
     last_name: DataTypes.STRING,
+    address: DataTypes.STRING,
   },
   {
     paranoid: true,

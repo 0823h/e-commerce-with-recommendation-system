@@ -3,7 +3,7 @@ import db from '@database';
 import User from './user.model';
 
 export interface IOrder extends Model {
-  id: number;
+  id: string;
   user_id: number;
   total_order_amount: number;
   price: number;
@@ -20,11 +20,8 @@ const Order = db.sequelize?.define<IOrder>(
   'Order',
   {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       primaryKey: true,
-      allowNull: false,
-      autoIncrement: true,
-      unique: true,
     },
     user_id: {
       type: DataTypes.INTEGER,

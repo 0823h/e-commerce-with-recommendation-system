@@ -46,6 +46,20 @@ class OrderController {
       return next(error);
     }
   };
+
+  vnpay = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const vnpayurl = await this.orderService.vnpay(req);
+      return res.status(200).json({
+        status: 200,
+        message: 'success',
+        data: vnpayurl,
+      });
+    } catch (error) {
+      console.log(error);
+      return next(error);
+    }
+  };
 }
 
 export default OrderController;
