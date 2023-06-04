@@ -60,6 +60,13 @@ class OrderController {
       return next(error);
     }
   };
+
+  getUniqueId = (req: JWTRequest, res: Response, next: NextFunction) => {
+    const id = this.orderService.getUniqueId();
+    return res.status(200).json({
+      id,
+    });
+  };
 }
 
 export default OrderController;

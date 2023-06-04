@@ -130,21 +130,21 @@ class CF {
     // console.log(a);
 
     const Y_data = await this.loadYData();
-    // console.log('row:', Y_data.getRow(4).toJSON());
-    // console.log('col: ', Y_data.getColumn(0).toJSON());
+    console.log('row:', Y_data.getRow(4).toJSON());
+    console.log('col: ', Y_data.getColumn(0).toJSON());
 
-    // console.log('m_users: ', Y_data.getMeanUsers().toJSON());
+    console.log('m_users: ', Y_data.getMeanUsers().toJSON());
 
-    // console.log('Y_bar_data: ');
+    console.log('Y_bar_data: ');
     const Y_bar_data = Y_data.getYbar();
     Y_bar_data.print();
 
-    // console.log(Y_bar_data.getColumn(1).tolist());
-    // console.log(Y_bar_data.getColumn(2).tolist());
+    console.log(Y_bar_data.getColumn(1).tolist());
+    console.log(Y_bar_data.getColumn(2).tolist());
     // const distant = cosine_similarity(Y_bar_data.getColumn(0).tolist(), Y_bar_data.getColumn(2).tolist());
 
     // console.log(distant);
-    // console.log(Y_data.getUsersWhoRateProduct(this.user_id, 1));
+    console.log(Y_data.getUsersWhoRateProduct(this.user_id, 1));
     console.log('Product not rate: ', Y_data.getProductsNotRateYet(this.user_id));
 
     // const predict_product = nj.zeros(this.n_products);

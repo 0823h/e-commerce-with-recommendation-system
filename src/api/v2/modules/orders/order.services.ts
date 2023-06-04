@@ -177,6 +177,10 @@ class OrderService {
     }
     return sorted;
   };
+
+  getUniqueId = () => {
+    return objectId();
+  };
 }
 
 export default OrderService;

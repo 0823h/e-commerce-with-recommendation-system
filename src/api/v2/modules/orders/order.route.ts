@@ -13,5 +13,6 @@ const OrderRoute = Router();
 OrderRoute.post('/', validate(orderCreateBody as schema), orderController.createOrder);
 OrderRoute.post('/vnpay', auth, orderController.vnpay);
 OrderRoute.get('/train', orderController.trainModel);
+OrderRoute.get('/get-unique-id', orderController.getUniqueId);
 
 export default OrderRoute;
