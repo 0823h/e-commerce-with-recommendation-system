@@ -109,7 +109,7 @@ class OrderService {
       let tmnCode = process.env.vnp_TmnCode;
       let secretKey = process.env.vnp_HashSecret;
       let vnpUrl = process.env.vnp_Url;
-      let returnUrl = 'https://www.google.com/';
+      let returnUrl = process.env.vnp_ReturnUrl;
       // let returnUrl = config.get('vnp_ReturnUrl');
       let orderId = moment(date).format('DDHHmmss');
       // let amount = req.body.amount;
