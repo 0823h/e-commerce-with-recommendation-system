@@ -13,7 +13,8 @@ class UserService {
 
   getUsers = async (req: JWTRequest) => {
     try {
-      const { page, limit } = req.query;
+      const page = parseInt(req.query.page as string, 10) || 1;
+      const limit = parseInt(req.query.limit as string, 10) || 10;
       const sort = req.query.sort || 'DESC';
       const orderBy: string = (req.query.orderBy as string) || 'createdAt';
 
@@ -22,19 +23,17 @@ class UserService {
         order: [[`${orderBy}`, `${(sort as string).toUpperCase()}`]],
       };
 
-      if (page && limit) {
-        query.offset = (parseInt(page as string, 10) - 1) * parseInt(limit as string, 10);
-        query.limit = parseInt(limit as string, 10);
-      }
+      query.offset = (page - 1) * limit;
+      query.limit = limit;
 
       console.log('query: ', query);
 
-      const products = await this.userModel.findAndCountAll(query);
+      const users = await this.userModel.findAndCountAll(query);
 
-      if (!products) {
+      if (!users) {
         throw new HttpException('Product not found', 404);
       }
-      return products;
+      return users;
     } catch (error) {
       console.log(error);
       throw error;

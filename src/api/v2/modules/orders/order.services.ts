@@ -10,6 +10,7 @@ import { HttpException } from '../../utils/http-exception';
 import moment from 'moment';
 import { JwtPayload } from 'jsonwebtoken';
 import { objectId } from '../../utils/functions';
+import { IQuery } from '../products/product.interface';
 
 class OrderService {
   private readonly orderModel: ModelStatic<IOrder>;
@@ -180,6 +181,29 @@ class OrderService {
 
   getUniqueId = () => {
     return objectId();
+  };
+
+  getOrders = async (req: JWTRequest) => {
+    try {
+      const page = parseInt(req.query.page as string, 10) || 1;
+      const limit = parseInt(req.query.limit as string, 10) || 10;
+      const sort = req.query.sort || 'DESC';
+      const orderBy: string = (req.query.orderBy as string) || 'createdAt';
+
+      const query: IQuery = {
+        order: [[`${orderBy}`, `${(sort as string).toUpperCase()}`]],
+      };
+
+      query.offset = (page - 1) * limit;
+      // console.log('offset: ' + query.offset);
+      query.limit = limit;
+      const orders = await this.orderModel.findAndCountAll(query);
+
+      return orders;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   };
 }
 

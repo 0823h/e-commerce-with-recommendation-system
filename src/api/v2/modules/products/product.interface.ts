@@ -13,6 +13,7 @@ export interface IQuery {
   offset?: number;
   limit?: number;
   sort?: string;
+  distinct?: boolean;
 }
 
-export interface IProductCreate extends Optional<IProduct, 'name' | 'description' | 'images' | 'quantity'> {}
+// export interface IProductCreate extends Optional<IProduct, 'name' | 'description' | 'images' | 'quantity'> {}

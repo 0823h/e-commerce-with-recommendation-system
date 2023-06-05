@@ -16,6 +16,10 @@ class ProductController {
       const page = parseInt(req.query.page as string, 10) || 1;
       const limit = parseInt(req.query.limit as string, 10) || 10;
 
+      // console.log('products.rows: ' + products.rows);
+
+      // console.log('page: ' + page + ' limit: ' + limit);
+
       const page_count = products.rows.length;
       const total_pages = Math.ceil(products.count / limit);
       const total_count = products.count;

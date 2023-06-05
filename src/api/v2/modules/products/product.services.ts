@@ -30,24 +30,30 @@ class ProductService {
 
   getAllProducts = async (req: JWTRequest): Promise<{ rows: IProduct[]; count: number }> => {
     try {
-      const { page, limit } = req.query;
+      const page = parseInt(req.query.page as string, 10) || 1;
+      const limit = parseInt(req.query.limit as string, 10) || 10;
+      // console.log('page: ' + page + ' limit: ' + limit);
       const sort = req.query.sort || 'DESC';
       const orderBy: string = (req.query.orderBy as string) || 'createdAt';
 
       const query: IQuery = {
         // where: { deleted: false },
+        // include: [{ model: this.categoryModel, attributes: ['name'] }],
         include: [{ model: this.categoryModel, attributes: ['name'], through: { attributes: [] } }],
+        distinct: true,
         order: [[`${orderBy}`, `${(sort as string).toUpperCase()}`]],
       };
 
-      if (page && limit) {
-        query.offset = (parseInt(page as string, 10) - 1) * parseInt(limit as string, 10);
-        query.limit = parseInt(limit as string, 10);
-      }
+      query.offset = (page - 1) * limit;
+      query.limit = limit;
 
       console.log('query: ', query);
 
       const products = await this.productModel.findAndCountAll(query);
+
+      // const products2 = await this.productModel.findAndCountAll();
+      // console.log('products2' + products2.count);
+      console.log('count' + products.count);
 
       if (!products) {
         throw new HttpException('Product not found', 404);
