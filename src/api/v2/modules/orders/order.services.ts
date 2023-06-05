@@ -195,7 +195,6 @@ class OrderService {
       };
 
       query.offset = (page - 1) * limit;
-      // console.log('offset: ' + query.offset);
       query.limit = limit;
       const orders = await this.orderModel.findAndCountAll(query);
 

@@ -7,6 +7,7 @@ export const userCreateBody = {
     password: Joi.string().required(),
     first_name: Joi.string().required(),
     last_name: Joi.string().required(),
+    address: Joi.string().required(),
   }),
 };
 
@@ -17,5 +18,6 @@ export const userUpdateBody = {
     password: Joi.string().optional(),
     first_name: Joi.string().optional(),
     last_name: Joi.string().optional(),
+    address: Joi.string().required(),
   }),
 };
