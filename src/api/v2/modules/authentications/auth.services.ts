@@ -60,7 +60,7 @@ class AuthService {
       const { email = '', password = '' } = payload;
       const user = await this.userModel.findOne({ where: { email } });
 
-      if (!user) {
+      if (!user || user.deleted === true) {
         throw new HttpException('User not found', 404);
       }
 

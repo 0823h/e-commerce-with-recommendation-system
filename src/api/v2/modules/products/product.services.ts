@@ -231,8 +231,8 @@ class ProductService {
       const variant = await this.variantModel.create({
         product_id,
         quantity,
-        size: size,
-        colour: colour,
+        size,
+        colour,
       });
 
       return variant;
