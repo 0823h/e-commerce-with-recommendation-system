@@ -6,6 +6,7 @@ import Product, { IProduct } from './product.model';
 export interface IFeedback extends Model {
   id: string;
   user_id: number;
+  guest_id: number;
   product_id: number;
   session_id: number;
   rate: number;
@@ -33,6 +34,9 @@ const Feedback = db.sequelize?.define<IFeedback>(
       references: {
         model: Product,
       },
+    },
+    guest_id: {
+      type: DataTypes.INTEGER,
     },
     rate: {
       type: DataTypes.FLOAT,

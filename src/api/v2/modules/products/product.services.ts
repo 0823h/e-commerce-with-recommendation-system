@@ -11,6 +11,7 @@ import { HttpException } from '../../utils/http-exception';
 import { IQuery } from './product.interface';
 import { objectId } from '../../utils/functions';
 import CF from '../../utils/collaborative_filtering';
+import es_client from '@src/configs/elasticsearch';
 
 class ProductService {
   private readonly productModel: ModelStatic<IProduct>;
@@ -141,6 +142,7 @@ class ProductService {
         await Promise.all(createCategoryPromises);
       }
 
+      this.reindexProducts();
       return product;
     } catch (error) {
       console.log(error);
@@ -176,12 +178,15 @@ class ProductService {
 
       feedback.rate = req.body.rate;
       await feedback.save();
+
+      this.reindexFeedbacks();
       return feedback;
     } catch (error) {
       console.log(error);
       throw error;
     }
   };
+
 
   collaborativeFiltering = async (req: JWTRequest) => {
     try {
@@ -256,6 +261,72 @@ class ProductService {
 
   //   }
   // }
+
+  reindexProducts = async () => {
+    try {
+      // Truy xuất dữ liệu từ cơ sở dữ liệu của bạn (ví dụ: từ MongoDB)
+      await this.deleteAllDocumentsES("product_index")
+      const products = await this.productModel.findAll();
+      console.log(products.length);
+      console.log(products[0]);
+
+      // Tên index trong Elasticsearch
+      const indexName = 'products_index';
+
+      // Lặp qua dữ liệu và đánh index từng mục
+      for (const item of products) {
+        await es_client.index({
+          index: indexName,
+          body: item, // Điều này giả định rằng dữ liệu của bạn có định dạng phù hợp với Elasticsearch
+        });
+        // console.log(`Đã đánh index dữ liệu với ID: ${response.body._id}`);
+      }
+
+      return 1
+    } catch (error) {
+      return error;
+    }
+  }
+
+  reindexFeedbacks = async () => {
+    try {
+      await this.deleteAllDocumentsES("feedback_index");
+      const indexName = "feedback_index"
+      const users = await this.userModel.findAll();
+      users.forEach(async user => {
+        let feedbacks = await this.feedbackModel.findAll({ attributes: ['product_id'], where: { user_id: user.id } });
+        let liked_product_ids = feedbacks.map(el => el.product_id);
+        await es_client.index({
+          index: indexName,
+          body: {
+            user_id: user.id,
+            liked_product_ids
+          }
+        })
+      })
+      return true
+    } catch (error) {
+      return error;
+    }
+  }
+
+  deleteAllDocumentsES = async (indexName: string) => {
+    try {
+      const response = await es_client.deleteByQuery({
+        index: indexName,
+        body: {
+          query: {
+            match_all: {}, // Lọc tất cả documents
+          },
+        },
+      });
+
+      console.log(`Đã xóa ${response.deleted} documents từ index ${indexName}`);
+    }
+    catch (error) {
+      return error;
+    }
+  }
 }
 
 export default ProductService;

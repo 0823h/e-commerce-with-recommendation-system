@@ -1,18 +1,37 @@
 {
   "compilerOptions": {
-    "typeRoots": ["src/configs/types"],
+    "typeRoots": [
+      "src/configs/types"
+    ],
     "baseUrl": ".",
     "paths": {
-      "@src/*": ["src/*"],
-      "@database": ["src/configs/database"],
-      "@models": ["src/configs/database/models"],
-      "@models/*": ["src/configs/database/models/*"],
-      "@express": ["src/configs/express"],
-      "@aws": ["src/configs/aws"]
+      "@src/*": [
+        "src/*"
+      ],
+      "@database": [
+        "src/configs/database"
+      ],
+      "@models": [
+        "src/configs/database/models"
+      ],
+      "@models/*": [
+        "src/configs/database/models/*"
+      ],
+      "@express": [
+        "src/configs/express"
+      ],
+      "@aws": [
+        "src/configs/aws"
+      ],
+      "elasticsearch": [
+        "src/configs/elasticsearch"
+      ]
     },
     "target": "es6" /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
     "module": "commonjs" /* Specify what module code is generated. */,
-    "rootDirs": ["src"] /* Specify the root folder within your source files. */,
+    "rootDirs": [
+      "src"
+    ] /* Specify the root folder within your source files. */,
     "resolveJsonModule": true /* Enable importing .json files */,
     "moduleResolution": "node" /* Specify how TypeScript looks up a file from a given module specifier. */,
     "outDir": "dist" /* Specify an output folder for all emitted files. */,
@@ -24,9 +43,18 @@
     "strict": true /* Enable all strict type-checking options. */,
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules", "dist", "__tests__", "coverage"],
+  "include": [
+    "src/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "__tests__",
+    "coverage"
+  ],
   "ts-node": {
-    "require": ["tsconfig-paths/register"]
+    "require": [
+      "tsconfig-paths/register"
+    ]
   }
 }

@@ -6,6 +6,7 @@ import CartRoute from './carts/cart.route';
 import AdminRoute from './admins/admin.route';
 import OrderRoute from './orders/order.route';
 import userRoute from './users/user.route';
+import guestRoute from './guests/guest.route';
 
 const router = Router();
 
@@ -16,5 +17,6 @@ router.use('/carts', CartRoute);
 router.use('/admins', AdminRoute);
 router.use('/orders', OrderRoute);
 router.use('/users', userRoute);
+router.use('/guests', guestRoute);
 
 export default router;

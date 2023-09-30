@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { Request as JWTRequest } from 'express-jwt';
 import ProductService from './product.services';
+import { error } from 'console';
 
 class ProductController {
   private productService: ProductService;
@@ -15,10 +16,6 @@ class ProductController {
 
       const page = parseInt(req.query.page as string, 10) || 1;
       const limit = parseInt(req.query.limit as string, 10) || 10;
-
-      // console.log('products.rows: ' + products.rows);
-
-      // console.log('page: ' + page + ' limit: ' + limit);
 
       const page_count = products.rows.length;
       const total_pages = Math.ceil(products.count / limit);
@@ -38,6 +35,8 @@ class ProductController {
           },
         },
       });
+
+
     } catch (error) {
       return next(error);
     }
@@ -126,6 +125,36 @@ class ProductController {
       return next(error);
     }
   };
+
+  // reindexProduct = async (req: JWTRequest, res: Response, next: NextFunction) => {
+  //   try {
+  //     const result = await this.productService.reindexProducts(req);
+  //     return res.status(200).json(
+  //       {
+  //         status: 200,
+  //         message: 'Success',
+  //         data: result
+  //       }
+  //     )
+  //   } catch (error) {
+  //     return next(error);
+  //   }
+  // }
+
+  // reindexFeedback = async (req: JWTRequest, res: Response, next: NextFunction) => {
+  //   try {
+  //     const result = await this.productService.reindexFeedbacks(req);
+  //     return res.status(200).json(
+  //       {
+  //         status: 200,
+  //         message: 'Success',
+  //         data: result
+  //       }
+  //     )
+  //   } catch (error) {
+  //     return next(error);
+  //   }
+  // }
 }
 
 export default ProductController;
