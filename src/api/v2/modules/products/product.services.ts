@@ -331,19 +331,17 @@ class ProductService {
 
   contentBasedFiltering = async (req: JWTRequest) => {
     try {
-      // const product = await Product.findOne();
-      // if (!product) {
-      //   return new HttpException("[CBF] product not found", 404);
-      // }
+      const product_id = req.body.product_id;
+      if (!product_id) {
+        throw new HttpException("product_id not found", 404);
+      }
       const contentBasedFiltering = new ContentBasedFiltering();
-      // contentBasedFiltering.createVectorFromProduct(product);
-
       const productVectors = contentBasedFiltering.createVectorFromProduct();
       const data = contentBasedFiltering.calculateSimilarity(productVectors);
       const similarityDocuments = contentBasedFiltering.getSimilarDocument(0, data);
-      console.log(similarityDocuments);
+      console.log("similarity documents: " + similarityDocuments);
     } catch (error) {
-      return error;
+      throw error;
     }
   }
 }

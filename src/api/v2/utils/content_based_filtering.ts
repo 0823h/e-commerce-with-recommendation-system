@@ -74,6 +74,8 @@ class ContentBasedFiltering {
         data[id] = data[id].slice(0, MAX_SIMILAR);
       }
     });
+
+    console.log(data);
     
     return data;
   }
