@@ -1,6 +1,7 @@
 import { Model, ModelStatic, Op } from 'sequelize';
 import User, { IUser } from '@src/configs/database/models/user.model';
 import Cart, { ICart } from '@src/configs/database/models/cart.model';
+import UserCount, { IUserCount } from '@src/configs/database/models/user_count.model';
 import { IAuthLogin, IAuthRegister } from './auth.interface';
 import { HttpException } from '../../utils/http-exception';
 import { bcryptComparePassword, bcryptHashPassword, generateToken, objectId } from '../../utils/functions';
@@ -8,10 +9,12 @@ import { bcryptComparePassword, bcryptHashPassword, generateToken, objectId } fr
 class AuthService {
   private readonly userModel: ModelStatic<IUser>;
   private readonly cartModel: ModelStatic<ICart>;
+  private readonly userCountModel: ModelStatic<IUserCount>;
 
   constructor() {
     this.userModel = User;
     this.cartModel = Cart;
+    this.userCountModel = UserCount;
   }
 
   register = async (payload: IAuthRegister): Promise<IUser> => {
@@ -30,14 +33,20 @@ class AuthService {
       }
       const n_users = (await this.userModel.findAndCountAll()).count;
       const hashPassword: string = await bcryptHashPassword(<string>payload.password);
+      const userCount = await this.userCountModel.findOne();
+      if (!userCount) {
+        throw new HttpException('User count not found', 404);
+      }
       const user = await this.userModel.create({
         ...payload,
+        user_id: userCount.user_count,
         password: hashPassword,
         id: n_users,
       });
       if (!user) {
         throw new HttpException('Cannot create user', 409);
       }
+      await userCount.update({ user_count: userCount.user_count + 1 })
 
       // Create cart
       // const user_cart = await this.cartModel.create({
