@@ -155,6 +155,19 @@ class ProductController {
   //     return next(error);
   //   }
   // }
+
+  contentBasedFiltering = async(req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const cbf_data = await this.productService.contentBasedFiltering(req);
+      return res.status(200).json({
+        status: 200,
+        message: 'success',
+        data: cbf_data
+      });
+    } catch (error) {
+      return next(error);
+    }
+  }
 }
 
 export default ProductController;

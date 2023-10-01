@@ -12,6 +12,7 @@ const productController = new ProductController(productService);
 const ProductRoute = Router();
 
 ProductRoute.get('/cf', auth, productController.collaborativeFiltering);
+ProductRoute.get('/cbf', productController.contentBasedFiltering);
 // ProductRoute.get('/reindex', auth, productController.reindexProduct);
 // ProductRoute.get('/reindex_feedback', productController.reindexFeedback);
 ProductRoute.get('/:id', productController.getVariantsOfProduct);

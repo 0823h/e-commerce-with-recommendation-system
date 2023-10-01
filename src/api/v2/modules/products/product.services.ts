@@ -11,6 +11,7 @@ import { HttpException } from '../../utils/http-exception';
 import { IQuery } from './product.interface';
 import { objectId } from '../../utils/functions';
 import CF from '../../utils/collaborative_filtering';
+import ContentBasedFiltering from '../../utils/content_based_filtering';
 import es_client from '@src/configs/elasticsearch';
 
 class ProductService {
@@ -324,6 +325,24 @@ class ProductService {
       console.log(`Đã xóa ${response.deleted} documents từ index ${indexName}`);
     }
     catch (error) {
+      return error;
+    }
+  }
+
+  contentBasedFiltering = async (req: JWTRequest) => {
+    try {
+      // const product = await Product.findOne();
+      // if (!product) {
+      //   return new HttpException("[CBF] product not found", 404);
+      // }
+      const contentBasedFiltering = new ContentBasedFiltering();
+      // contentBasedFiltering.createVectorFromProduct(product);
+
+      const productVectors = contentBasedFiltering.createVectorFromProduct();
+      const data = contentBasedFiltering.calculateSimilarity(productVectors);
+      const similarityDocuments = contentBasedFiltering.getSimilarDocument(0, data);
+      console.log(similarityDocuments);
+    } catch (error) {
       return error;
     }
   }
