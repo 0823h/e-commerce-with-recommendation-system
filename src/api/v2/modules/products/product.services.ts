@@ -336,10 +336,10 @@ class ProductService {
         throw new HttpException("product_id not found", 404);
       }
       const contentBasedFiltering = new ContentBasedFiltering();
-      const productVectors = contentBasedFiltering.createVectorFromProduct();
+      const productVectors = await contentBasedFiltering.createVectorFromProduct();
       const data = contentBasedFiltering.calculateSimilarity(productVectors);
       const similarityDocuments = contentBasedFiltering.getSimilarDocument(0, data);
-      console.log("similarity documents: " + similarityDocuments);
+      return similarityDocuments;
     } catch (error) {
       throw error;
     }

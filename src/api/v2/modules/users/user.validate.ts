@@ -21,3 +21,21 @@ export const userUpdateBody = {
     address: Joi.string().required(),
   }),
 };
+
+export const createAddress = {
+  body: Joi.object({
+    country: Joi.string().required(),
+    province: Joi.string().required(),
+    city: Joi.string().required(),
+    detail: Joi.string().required(),
+  })
+}
+
+export const updateAddress = {
+  body: Joi.object({
+    country: Joi.string().required(),
+    province: Joi.string().required(),
+    city: Joi.string().required(),
+    detail: Joi.string().required(),
+  })
+}

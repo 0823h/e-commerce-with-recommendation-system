@@ -156,13 +156,13 @@ class ProductController {
   //   }
   // }
 
-  contentBasedFiltering = async(req: JWTRequest, res: Response, next: NextFunction) => {
+  contentBasedFiltering = async (req: JWTRequest, res: Response, next: NextFunction) => {
     try {
-      const cbf_data = await this.productService.contentBasedFiltering(req);
+      const simimlarity_documents = await this.productService.contentBasedFiltering(req);
       return res.status(200).json({
         status: 200,
         message: 'success',
-        data: cbf_data
+        data: simimlarity_documents
       });
     } catch (error) {
       return next(error);

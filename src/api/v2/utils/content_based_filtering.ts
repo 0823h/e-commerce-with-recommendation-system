@@ -18,31 +18,36 @@ class ContentBasedFiltering {
       tfidf.addDocument(JSON.stringify(processedProduct));
       return processedProduct;
     })
-    
+
+    console.log(processedProducts.length)
+
     const productVectors = [];
 
-    for(let i = 0; i < products.length; i++) {
+    for (let i = 0; i < processedProducts.length; i++) {
       const processedProduct = processedProducts[i];
       const obj: any = {};
 
       const items = tfidf.listTerms(i);
 
-      for(let j = 0; j < items.length; j++) {
+      for (let j = 0; j < items.length; j++) {
         const item = items[j];
         obj[item.term] = item.tfidf;
       }
 
       const productVector = {
         id: processedProduct.id,
-        vector: new Vector(obj) 
+        vector: new Vector(obj)
       };
+
+      console.log({ i });
 
       productVectors.push(productVector);
 
-      return productVectors;
     }
+    console.log(productVectors[1].vector);
+    return productVectors;
   }
-  calculateSimilarity = async (productVectors: any) => {
+  calculateSimilarity = (productVectors: any) => {
     const MAX_SIMILAR = 20;
     const MIN_SCORE = 0.2;
     const data: any = {};
@@ -53,14 +58,14 @@ class ContentBasedFiltering {
     }
 
     for (let i = 0; i < productVectors.length; i += 1) {
-      for(let j = 0; j < i; j++) {
+      for (let j = 0; j < i; j++) {
         const idi = productVectors[i].id;
         const vi = productVectors[i].vector;
         const idj = productVectors[j].id;
         const vj = productVectors[j].vector;
         const similarity = vi.getCosineSimilarity(vj);
 
-        if(similarity > MIN_SCORE) {
+        if (similarity > MIN_SCORE) {
           data[idi].push({ id: idj, score: similarity });
           data[idj].push({ id: idi, score: similarity });
         }
@@ -75,8 +80,7 @@ class ContentBasedFiltering {
       }
     });
 
-    console.log(data);
-    
+    console.log({ data });
     return data;
   }
   getSimilarDocument = (id: any, trainedData: any) => {
@@ -86,6 +90,7 @@ class ContentBasedFiltering {
       return [];
     }
 
+    console.log({ similarDocuments });
     return similarDocuments;
   }
 }

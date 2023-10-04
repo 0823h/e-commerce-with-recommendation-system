@@ -1,14 +1,18 @@
 import User, { IUser } from '@src/configs/database/models/user.model';
+import Address, { IAddress } from '@src/configs/database/models/address.model';
 import { ModelStatic, Op } from 'sequelize';
 import { Request as JWTRequest } from 'express-jwt';
 import { IQuery } from '../products/product.interface';
 import { HttpException } from '../../utils/http-exception';
 import { bcryptHashPassword } from '../../utils/functions';
+import { JwtPayload } from 'jsonwebtoken';
 
 class UserService {
   private readonly userModel: ModelStatic<IUser>;
+  private readonly addressModel: ModelStatic<IAddress>;
   constructor() {
     this.userModel = User;
+    this.addressModel = Address;
   }
 
   getUsers = async (req: JWTRequest) => {
@@ -126,6 +130,135 @@ class UserService {
       throw error;
     }
   };
+
+  createAddress = async (req: JWTRequest) => {
+    try {
+      const { user_id } = (<JwtPayload>req.auth).data;
+      const user = await this.userModel.findByPk(user_id);
+      if (!user) {
+        throw new HttpException('User not found', 404);
+      }
+      const address = await this.addressModel.create({
+        user_id: user.id,
+        ...req.body
+      })
+      return address;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  retrieveAddresses = async (req: JWTRequest) => {
+    try {
+      const { user_id } = (<JwtPayload>req.auth).data;
+      const user = await this.userModel.findByPk(user_id);
+      if (!user) {
+        throw new HttpException('User not found', 404);
+      }
+      const addresses = await this.addressModel.findAll({
+        where: {
+          user_id: user.id
+        }
+      })
+      return addresses;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  retrieveAddress = async (req: JWTRequest) => {
+    try {
+      const { user_id } = (<JwtPayload>req.auth).data;
+      const user = await this.userModel.findByPk(user_id);
+      if (!user) {
+        throw new HttpException('User not found', 404);
+      }
+      const { address_id } = req.params;
+      if (!address_id) {
+        throw new HttpException('address_id not found', 404);
+      }
+      const address = await this.addressModel.findOne({
+        where: {
+          user_id: user.id,
+          id: address_id
+        }
+      })
+      if (!address) {
+        throw new HttpException('Address not found', 404);
+      }
+      return address;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  addUserAddress = async (req: JWTRequest) => {
+    try {
+      const { user_id } = (<JwtPayload>req.auth).data;
+      const user = await this.userModel.findByPk(user_id);
+      if (!user) {
+        throw new HttpException('User not found', 404);
+      }
+      const address = await this.addressModel.create({
+        user_id: user.id,
+        ...req.body
+      });
+      if (!address) {
+        throw new HttpException('Cannot create address', 401);
+      }
+      return address;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  updateAddress = async (req: JWTRequest) => {
+    try {
+      const { user_id } = (<JwtPayload>req.auth).data;
+      const user = await this.userModel.findByPk(user_id);
+      if (!user) {
+        throw new HttpException('User not found', 404);
+      }
+      const { address_id } = req.params;
+      const address = await this.addressModel.findOne({
+        where: {
+          user_id: user.id,
+          id: address_id
+        }
+      })
+      if (!address) {
+        throw new HttpException('Address not found', 404);
+      }
+      await address.update({
+        ...req.body
+      })
+      await address.save();
+      return address;
+    }
+    catch (error) {
+      throw error;
+    }
+  }
+
+  deleteAddress = async (req: JWTRequest) => {
+    try {
+      const { user_id } = (<JwtPayload>req.auth).data;
+      const user = await this.userModel.findByPk(user_id);
+      if (!user) {
+        throw new HttpException('User not found', 404);
+      }
+      const { address_id } = req.params;
+      const result = await this.addressModel.destroy({
+        where: {
+          user_id: user.id,
+          id: address_id
+        }
+      })
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default UserService;

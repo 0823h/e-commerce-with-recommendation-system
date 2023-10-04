@@ -90,6 +90,72 @@ class UserController {
       return next(error);
     }
   };
+  // User's address(s) controllers
+  // Create one
+  createAddress = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const address = await this.userService.createAddress(req);
+      return res.status(201).json({
+        status: 201,
+        message: 'success',
+        data: address,
+      })
+    } catch (error) {
+      return next(error);
+    }
+  }
+  // Retrieve all
+  retrieveAddresses = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const addresses = await this.userService.retrieveAddresses(req);
+      return res.status(200).json({
+        status: 201,
+        message: 'success',
+        data: addresses,
+      })
+    } catch (error) {
+      return next(error);
+    }
+  }
+  // Retrieve one
+  retrieveAddress = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const address = await this.userService.retrieveAddress(req);
+      return res.status(200).json({
+        status: 201,
+        message: 'success',
+        data: address,
+      })
+    } catch (error) {
+      return next(error);
+    }
+  }
+  // Update one
+  updateAddress = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const address = await this.userService.updateAddress(req);
+      return res.status(200).json({
+        status: 200,
+        message: 'success',
+        data: address,
+      })
+    } catch (error) {
+      return next(error);
+    }
+  }
+  // Delete one
+  deleteAddress = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const result = await this.userService.deleteAddress(req);
+      return res.status(200).json({
+        status: 200,
+        message: 'success',
+        data: result,
+      })
+    } catch (error) {
+      return next(error);
+    }
+  }
 }
 
 export default UserController;

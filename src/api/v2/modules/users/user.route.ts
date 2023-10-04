@@ -4,12 +4,20 @@ import { auth } from '../../middlewares/auth.middleware';
 import { adminRoleCheck } from '../../middlewares/adminrolecheck.middleware';
 import UserService from './user.services';
 import UserController from './user.controller';
-import { userCreateBody, userUpdateBody } from './user.validate';
+import { createAddress, updateAddress, userCreateBody, userUpdateBody } from './user.validate';
 
 const userService = new UserService();
 const userController = new UserController(userService);
 
 const userRoute = Router();
+
+// Address API
+// CRUD
+userRoute.post('/address', auth, validate(createAddress as schema), userController.createAddress);
+userRoute.get('/addresses', auth, userController.retrieveAddresses);
+userRoute.get('/address/:address_id', auth, userController.retrieveAddress);
+userRoute.put('/address/:address_id', auth, validate(updateAddress as schema), userController.updateAddress);
+userRoute.delete('/address/:address_id', auth, userController.deleteAddress);
 
 userRoute.get('/', auth, adminRoleCheck(['superadmin']), userController.getUsers);
 userRoute.post(
@@ -28,5 +36,6 @@ userRoute.put(
   userController.updateUser
 );
 userRoute.delete('/:id', auth, adminRoleCheck(['superadmin']), userController.deleteUser);
+
 
 export default userRoute;
