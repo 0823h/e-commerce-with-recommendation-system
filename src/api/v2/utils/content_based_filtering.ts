@@ -45,6 +45,7 @@ class ContentBasedFiltering {
 
     }
     console.log(productVectors[1].vector);
+    console.log(productVectors[2].vector);
     return productVectors;
   }
   calculateSimilarity = (productVectors: any) => {
@@ -64,6 +65,7 @@ class ContentBasedFiltering {
         const idj = productVectors[j].id;
         const vj = productVectors[j].vector;
         const similarity = vi.getCosineSimilarity(vj);
+        console.log(similarity)
 
         if (similarity > MIN_SCORE) {
           data[idi].push({ id: idj, score: similarity });
