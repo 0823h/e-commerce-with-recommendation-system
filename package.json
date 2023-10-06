@@ -16,7 +16,8 @@
     "seed:all": "npx sequelize-cli db:seed:all",
     "seed:up": "npx sequelize-cli db:seed --seed",
     "seed:down": "npx sequelize-cli db:seed:undo --seed",
-    "seed:generate": "npx sequelize-cli seed:generate --name"
+    "seed:generate": "npx sequelize-cli seed:generate --name",
+    "train": "nodemon src/api/v2/utils/chatbot/train.js"
   },
   "repository": {
     "type": "git",
@@ -69,6 +70,7 @@
     "node-cron": "^3.0.2",
     "node-fetch": "^2.6.7",
     "node-geocoder": "^4.2.0",
+    "node-nlp": "^4.27.0",
     "numjs": "^0.16.1",
     "otp-generator": "^4.0.0",
     "pg": "^8.7.3",

@@ -19,6 +19,9 @@ userRoute.get('/address/:address_id', auth, userController.retrieveAddress);
 userRoute.put('/address/:address_id', auth, validate(updateAddress as schema), userController.updateAddress);
 userRoute.delete('/address/:address_id', auth, userController.deleteAddress);
 
+// Get Self Info
+userRoute.get('/self', auth, userController.retrieveSelfUser);
+
 userRoute.get('/', auth, adminRoleCheck(['superadmin']), userController.getUsers);
 userRoute.post(
   '/',

@@ -19,8 +19,6 @@ class ContentBasedFiltering {
       return processedProduct;
     })
 
-    console.log(processedProducts.length)
-
     const productVectors = [];
 
     for (let i = 0; i < processedProducts.length; i++) {
@@ -39,13 +37,9 @@ class ContentBasedFiltering {
         vector: new Vector(obj)
       };
 
-      console.log({ i });
-
       productVectors.push(productVector);
 
     }
-    console.log(productVectors[1].vector);
-    console.log(productVectors[2].vector);
     return productVectors;
   }
   calculateSimilarity = (productVectors: any) => {
@@ -65,7 +59,6 @@ class ContentBasedFiltering {
         const idj = productVectors[j].id;
         const vj = productVectors[j].vector;
         const similarity = vi.getCosineSimilarity(vj);
-        console.log(similarity)
 
         if (similarity > MIN_SCORE) {
           data[idi].push({ id: idj, score: similarity });
@@ -92,7 +85,6 @@ class ContentBasedFiltering {
       return [];
     }
 
-    console.log({ similarDocuments });
     return similarDocuments;
   }
 }

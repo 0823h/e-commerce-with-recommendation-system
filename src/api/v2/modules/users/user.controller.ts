@@ -156,6 +156,19 @@ class UserController {
       return next(error);
     }
   }
+
+  retrieveSelfUser = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const user = await this.userService.retrieveSelfUser(req);
+      return res.status(200).json({
+        status: 200,
+        message: 'success',
+        data: user,
+      })
+    } catch (error) {
+      return next(error);
+    }
+  }
 }
 
 export default UserController;
