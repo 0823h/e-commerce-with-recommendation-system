@@ -1,11 +1,20 @@
 import { Joi } from 'express-validation';
 
-export const orderCreateBody = {
+export const adminCreateOrderBody = {
   body: Joi.object({
     user_id: Joi.number().required(),
-    address: Joi.string().required(),
+    address_id: Joi.number().required(),
     order: Joi.array().items(
-      Joi.object({ product_id: Joi.number().optional(), quantity: Joi.number().optional() }).optional()
+      Joi.object({ variant_id: Joi.string().optional(), quantity: Joi.number().optional() }).optional()
+    ),
+  }),
+};
+
+export const userCreateOrderBody = {
+  body: Joi.object({
+    address_id: Joi.number().required(),
+    order: Joi.array().items(
+      Joi.object({ variant_id: Joi.string().optional(), quantity: Joi.number().optional() }).optional()
     ),
   }),
 };

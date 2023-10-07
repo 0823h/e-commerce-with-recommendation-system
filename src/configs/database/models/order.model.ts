@@ -1,13 +1,14 @@
 import { DataTypes, Model, ModelStatic } from 'sequelize';
 import db from '@database';
 import User from './user.model';
+import Address from './address.model';
 
 export interface IOrder extends Model {
-  id: string;
+  id: number;
   user_id: number;
   total_order_amount: number;
   price: number;
-  address: string;
+  address_id: string;
   phone_number: string;
   email: string;
   is_fraud: boolean;
@@ -20,11 +21,18 @@ const Order = db.sequelize?.define<IOrder>(
   'Order',
   {
     id: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
       primaryKey: true,
+      allowNull: false,
+      unique: true,
     },
     user_id: {
       type: DataTypes.INTEGER,
+      references: {
+        model: User,
+        key: 'id'
+      }
     },
     total_order_amount: {
       type: DataTypes.INTEGER,
@@ -32,8 +40,12 @@ const Order = db.sequelize?.define<IOrder>(
     price: {
       type: DataTypes.FLOAT,
     },
-    address: {
-      type: DataTypes.STRING,
+    address_id: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: Address,
+        key: 'id'
+      }
     },
     phone_number: {
       type: DataTypes.STRING,

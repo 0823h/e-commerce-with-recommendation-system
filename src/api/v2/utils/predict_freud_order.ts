@@ -93,7 +93,7 @@ export const decisionTree = async (order_info: IOrder) => {
     const x = orders.map((order) => [
       order.total_order_amount,
       order.price,
-      order.address.length,
+      // order.address.length,
       order.phone_number.length,
       order.email.length,
     ]);
@@ -109,7 +109,7 @@ export const decisionTree = async (order_info: IOrder) => {
     const order_info_cleaned = [
       order_info.total_order_amount,
       order_info.price,
-      order_info.address.length,
+      // order_info.address.length,
       order_info.phone_number.length,
       order_info.email.length,
     ];

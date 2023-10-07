@@ -4,8 +4,8 @@ import { DataTypes } from 'sequelize';
 
 export interface IOrderItem extends Model {
   id: number;
-  order_id: number;
-  product_id: number;
+  order_id: string;
+  variant_id: number;
   quantity: number;
   price: number;
   deletedAt: Date;
@@ -22,9 +22,9 @@ const OrderItem = db.sequelize?.define<IOrderItem>('OrderItem', {
     unique: true,
   },
   order_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
   },
-  product_id: {
+  variant_id: {
     type: DataTypes.INTEGER,
   },
   quantity: {

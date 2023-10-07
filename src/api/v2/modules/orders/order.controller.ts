@@ -8,9 +8,9 @@ class OrderController {
     this.orderService = orderService;
   }
 
-  createOrder = async (req: JWTRequest, res: Response, next: NextFunction) => {
+  adminCreateOrder = async (req: JWTRequest, res: Response, next: NextFunction) => {
     try {
-      const order = await this.orderService.createOrder(req);
+      const order = await this.orderService.adminCreateOrder(req);
       return res.status(200).json({
         status: 200,
         message: 'success',
@@ -96,6 +96,20 @@ class OrderController {
       return next(error);
     }
   };
+
+  userCreateOrder = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const order = await this.orderService.userCreateOrder(req);
+      return res.status(200).json({
+        status: 200,
+        message: 'success',
+        data: order,
+      });
+    }
+    catch (error) {
+      return next(error);
+    }
+  }
 }
 
 export default OrderController;

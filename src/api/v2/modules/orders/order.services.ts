@@ -2,6 +2,7 @@ import Order, { IOrder } from '@models/order.model';
 import OrderItem, { IOrderItem } from '@models/order_item.model';
 import Product, { IProduct } from '@models/product.model';
 import User, { IUser } from '@models/user.model';
+import Variant, { IVariant } from '@models/variant.model';
 import { ModelStatic } from 'sequelize';
 import { Request as JWTRequest } from 'express-jwt';
 import { decisionTree, training } from '../../utils/predict_freud_order';
@@ -11,25 +12,27 @@ import moment from 'moment';
 import { JwtPayload } from 'jsonwebtoken';
 import { objectId } from '../../utils/functions';
 import { IQuery } from '../products/product.interface';
-
 class OrderService {
   private readonly orderModel: ModelStatic<IOrder>;
   private readonly orderItemModel: ModelStatic<IOrderItem>;
   private readonly productModel: ModelStatic<IProduct>;
   private readonly userModel: ModelStatic<IUser>;
+  private readonly variantModel: ModelStatic<IVariant>;
   constructor() {
     this.orderModel = Order;
     this.orderItemModel = OrderItem;
     this.productModel = Product;
     this.userModel = User;
+    this.variantModel = Variant;
   }
-  createOrder = async (req: JWTRequest): Promise<IOrder> => {
+  adminCreateOrder = async (req: JWTRequest): Promise<IOrder> => {
     try {
       const order_items = req.body.order;
 
       const order = await this.orderModel.create({
+        id: objectId(),
         user_id: req.body.user_id,
-        address: req.body.address,
+        address: req.body.address_id,
       });
 
       let total_order_quantity = 0;
@@ -201,6 +204,55 @@ class OrderService {
       return orders;
     } catch (error) {
       console.log(error);
+      throw error;
+    }
+  };
+
+  userCreateOrder = async (req: JWTRequest) => {
+    try {
+      const { user_id } = (<JwtPayload>req.auth).data;
+      const user = await this.userModel.findByPk(user_id);
+      if (!user) {
+        throw new HttpException('User not found', 403);
+      }
+
+      const order_items = req.body.order;
+      let total_order_quantity = 0;
+      let total_order_price = 0;
+
+      const order = await this.orderModel.create({
+        id: objectId(),
+        user_id: user.id,
+        address: req.body.address_id,
+      });
+
+      const createOrderPromise = order_items.map(async (order_item: any) => {
+        await this.orderItemModel.create({
+          order_id: order.id,
+          ...order_item,
+        });
+        total_order_quantity = total_order_quantity + order_item.quantity;
+        const variant = await this.variantModel.findByPk(order_item.variant_id);
+        if (!variant) {
+          throw new HttpException(`Variant with id ${order_item.variant_id} not found`, 404);
+        }
+        console.log("product_id: " + variant.product_id);
+        const product = await this.productModel.findByPk(variant.product_id);
+        if (!product) {
+          throw new HttpException(`Product with id ${order_item.product_id} not found`, 404);
+        }
+        total_order_price = total_order_price + order_item.quantity * product.current_price;
+      });
+
+      await Promise.all(createOrderPromise);
+
+      await order.update({
+        price: total_order_price,
+        total_order_amount: total_order_quantity,
+      });
+
+      return order;
+    } catch (error) {
       throw error;
     }
   };
