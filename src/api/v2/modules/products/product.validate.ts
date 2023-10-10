@@ -19,6 +19,13 @@ export const productRateBody = {
   }),
 };
 
+export const productRateForGuestBody = {
+  body: Joi.object({
+    session_id: Joi.string().required(),
+    rate: Joi.number().required()
+  })
+}
+
 export const variantCreateBody = {
   body: Joi.object({
     quantity: Joi.number().required(),

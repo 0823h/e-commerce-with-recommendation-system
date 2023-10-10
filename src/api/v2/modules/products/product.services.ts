@@ -180,13 +180,66 @@ class ProductService {
       feedback.rate = req.body.rate;
       await feedback.save();
 
-      this.reindexFeedbacks();
+      // this.reindexFeedbacks();
       return feedback;
     } catch (error) {
       console.log(error);
       throw error;
     }
   };
+
+  rateProductForGuest = async (req: JWTRequest) => {
+    try {
+      const { session_id, rate } = req.body;
+      if (!session_id) {
+        throw new HttpException("session_id not found", 404);
+      }
+      const product_id = req.params.id;
+      if (!product_id) {
+        throw new HttpException("product_id not found", 404);
+      }
+
+      const guest = await this.userModel.findOne({
+        where: {
+          session_id
+        }
+      })
+      if (!guest) {
+        throw new HttpException("Guest not found", 404);
+      }
+
+      const product = await this.productModel.findOne({
+        where: {
+          id: product_id
+        }
+      });
+      if (!product) {
+        throw new HttpException("Product not found", 404);
+      }
+
+      let feedback = await this.feedbackModel.findOne({
+        where: {
+          user_id: guest.id,
+          product_id
+        }
+      })
+      if (!feedback) {
+        feedback = await this.feedbackModel.create({
+          id: objectId(),
+          user_id: guest.id,
+          product_id,
+          rate
+        })
+
+        return feedback;
+      }
+      await feedback.update({ rate });
+      await feedback.save();
+      return feedback;
+    } catch (error) {
+      throw error;
+    }
+  }
 
 
   collaborativeFiltering = async (req: JWTRequest) => {

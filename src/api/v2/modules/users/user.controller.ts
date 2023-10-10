@@ -169,6 +169,21 @@ class UserController {
       return next(error);
     }
   }
+
+  createGuest = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const guest = await this.userService.createGuest(req);
+      return res.status(201).json({
+        status: 201,
+        message: 'success',
+        data: guest
+      })
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+
 }
 
 export default UserController;

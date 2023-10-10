@@ -2,7 +2,6 @@ import { DataTypes, Model, ModelStatic } from 'sequelize';
 import db from '@database';
 export interface IUser extends Model {
   id: number;
-  user_no: number;
   email: string;
   email_verified: boolean;
   phone_number: string;
@@ -12,6 +11,8 @@ export interface IUser extends Model {
   first_name: string;
   last_name: string;
   address: string;
+  session_id: string;
+  is_guest: boolean;
   deleted: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -23,7 +24,6 @@ const User = db.sequelize?.define<IUser>('User', {
     allowNull: false,
     unique: true,
   },
-  user_id: DataTypes.INTEGER,
   email: DataTypes.STRING,
   email_verified: { type: DataTypes.BOOLEAN, defaultValue: true },
   phone_number: DataTypes.STRING,
@@ -33,6 +33,8 @@ const User = db.sequelize?.define<IUser>('User', {
   first_name: DataTypes.STRING,
   last_name: DataTypes.STRING,
   address: DataTypes.STRING,
+  session_id: DataTypes.STRING,
+  is_guest: DataTypes.BOOLEAN,
   deleted: { type: DataTypes.BOOLEAN, defaultValue: false },
 }) as ModelStatic<IUser>;
 export default User;

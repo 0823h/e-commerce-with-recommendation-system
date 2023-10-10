@@ -100,6 +100,19 @@ class ProductController {
     }
   };
 
+  rateProductForGuest = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const feedback = await this.productService.rateProductForGuest(req);
+      return res.status(200).json({
+        status: 200,
+        message: 'success',
+        data: feedback
+      })
+    } catch (error) {
+      return next(error);
+    }
+  }
+
   collaborativeFiltering = async (req: JWTRequest, res: Response, next: NextFunction) => {
     try {
       const products = await this.productService.collaborativeFiltering(req);

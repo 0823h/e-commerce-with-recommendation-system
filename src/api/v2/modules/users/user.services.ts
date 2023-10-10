@@ -4,15 +4,18 @@ import { ModelStatic, Op } from 'sequelize';
 import { Request as JWTRequest } from 'express-jwt';
 import { IQuery } from '../products/product.interface';
 import { HttpException } from '../../utils/http-exception';
-import { bcryptHashPassword } from '../../utils/functions';
+import { bcryptHashPassword, objectId } from '../../utils/functions';
 import { JwtPayload } from 'jsonwebtoken';
+import UserCount, { IUserCount } from '@src/configs/database/models/user_count.model';
 
 class UserService {
   private readonly userModel: ModelStatic<IUser>;
   private readonly addressModel: ModelStatic<IAddress>;
+  private readonly userCountModel: ModelStatic<IUserCount>;
   constructor() {
     this.userModel = User;
     this.addressModel = Address;
+    this.userCountModel = UserCount;
   }
 
   getUsers = async (req: JWTRequest) => {
@@ -272,6 +275,24 @@ class UserService {
       throw error;
     }
   }
+
+  createGuest = async (req: JWTRequest) => {
+    try {
+      const n_users = (await this.userModel.findAndCountAll()).count;
+
+      const guest = await this.userModel.create({
+        session_id: objectId(),
+        is_guest: true,
+        id: n_users
+      });
+
+      return guest;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
 }
 
 export default UserService;
