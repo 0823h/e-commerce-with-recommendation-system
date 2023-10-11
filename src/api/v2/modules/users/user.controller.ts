@@ -65,6 +65,19 @@ class UserController {
     }
   };
 
+  updateUserForAdmin = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const user = await this.userService.updateUserForAdmin(req);
+      return res.status(200).json({
+        status: 200,
+        message: 'success',
+        data: user,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  }
+
   deleteUser = async (req: JWTRequest, res: Response, next: NextFunction) => {
     try {
       await this.userService.deleteUser(req);

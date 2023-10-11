@@ -21,6 +21,7 @@ userRoute.delete('/address/:address_id', auth, userController.deleteAddress);
 
 // Get Self Info
 userRoute.get('/self', auth, userController.retrieveSelfUser);
+userRoute.put('/self', auth, userController.updateUser);
 
 userRoute.post('/guests', userController.createGuest);
 
@@ -38,7 +39,7 @@ userRoute.put(
   auth,
   adminRoleCheck(['superadmin']),
   validate(userUpdateBody as schema),
-  userController.updateUser
+  userController.updateUserForAdmin
 );
 userRoute.delete('/:id', auth, adminRoleCheck(['superadmin']), userController.deleteUser);
 

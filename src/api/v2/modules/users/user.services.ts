@@ -63,7 +63,7 @@ class UserService {
     }
   };
 
-  updateUser = async (req: JWTRequest) => {
+  updateUserForAdmin = async (req: JWTRequest) => {
     try {
       const user_id = req.params.id;
       const user = await this.userModel.findByPk(user_id);
@@ -292,7 +292,24 @@ class UserService {
     }
   }
 
-
+  updateUser = async (req: JWTRequest) => {
+    try {
+      const { user_id } = (<JwtPayload>req.auth).data;
+      const { password } = req.body
+      const user = await this.userModel.findByPk(user_id);
+      if (!user) {
+        throw new HttpException('User not found', 404);
+      }
+      const hashPassword: string = await bcryptHashPassword(<string>password);
+      await user.update({
+        ...req.body,
+        password: hashPassword
+      });
+      await user.save();
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default UserService;
