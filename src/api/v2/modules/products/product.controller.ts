@@ -181,6 +181,19 @@ class ProductController {
       return next(error);
     }
   }
+
+  collaborativeFilteringForGuest = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const similarity_documents = await this.productService.collaborativeFilteringForGuest(req);
+      return res.status(200).json({
+        status: 200,
+        message: 'success',
+        data: similarity_documents,
+      })
+    } catch (error) {
+      return next(error);
+    }
+  }
 }
 
 export default ProductController;

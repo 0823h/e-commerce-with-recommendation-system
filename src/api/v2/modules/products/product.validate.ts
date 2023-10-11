@@ -33,3 +33,9 @@ export const variantCreateBody = {
     colour: Joi.string().required(),
   }),
 };
+
+export const collaborativeFilteringForGuest = {
+  body: Joi.object({
+    session_id: Joi.string().required()
+  })
+};

@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { schema, validate } from 'express-validation';
 import ProductController from './product.controller';
 import ProductService from './product.services';
-import { productCreateBody, productRateBody, productRateForGuestBody, variantCreateBody } from './product.validate';
+import { productCreateBody, productRateBody, productRateForGuestBody, variantCreateBody, collaborativeFilteringForGuest } from './product.validate';
 import { auth } from '../../middlewares/auth.middleware';
 import { adminRoleCheck } from '../../middlewares/adminrolecheck.middleware';
 
@@ -12,6 +12,7 @@ const productController = new ProductController(productService);
 const ProductRoute = Router();
 
 ProductRoute.get('/cf', auth, productController.collaborativeFiltering);
+ProductRoute.post('/cf/guest', productController.collaborativeFilteringForGuest);
 ProductRoute.get('/cbf', productController.contentBasedFiltering);
 // ProductRoute.get('/reindex', auth, productController.reindexProduct);
 // ProductRoute.get('/reindex_feedback', productController.reindexFeedback);

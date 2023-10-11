@@ -106,6 +106,9 @@ class ProductService {
         throw new HttpException('Product not found', 404);
       }
 
+      await product.update({ view: product.view + 1 });
+      await product.save();
+
       return { product, ...variants };
     } catch (error) {
       console.log(error);
@@ -247,7 +250,7 @@ class ProductService {
       const { user_id } = (<JwtPayload>req.auth).data;
       const user = await this.userModel.findByPk(user_id);
       if (!user) {
-        throw new HttpException('User not found', 403);
+        throw new HttpException('User not found', 404);
       }
       const n_users = (await this.userModel.findAndCountAll()).count;
       const n_products = (await this.productModel.findAndCountAll()).count;
@@ -275,6 +278,48 @@ class ProductService {
       throw error;
     }
   };
+
+  collaborativeFilteringForGuest = async (req: JWTRequest) => {
+    try {
+      const { session_id } = req.body;
+      if (!session_id) {
+        throw new HttpException('session_id not found', 404);
+      }
+      const user = await this.userModel.findOne({
+        where: {
+          session_id
+        }
+      });
+      if (!user) {
+        throw new HttpException('User not found', 404);
+      }
+      console.log("user: " + user);
+
+      const n_users = (await this.userModel.findAndCountAll()).count;
+      const n_products = (await this.productModel.findAndCountAll()).count;
+      const cf = new CF(n_users, n_products, user.id, 2);
+      const product_suggested_ids = await cf.runCF();
+
+      console.log('product_suggested_ids: ', product_suggested_ids);
+
+      const product_suggested_ids_postive: number[][] = [];
+
+      product_suggested_ids.forEach((id) => {
+        if (id[1] > 0) {
+          product_suggested_ids_postive.push(id);
+        }
+      });
+
+      const products_promise = product_suggested_ids_postive.map(async (product_id) => {
+        return await this.productModel.findByPk(product_id[0]);
+      });
+
+      const products = await Promise.all(products_promise);
+      return products;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   createVariant = async (req: JWTRequest) => {
     try {
@@ -404,6 +449,30 @@ class ProductService {
       const products = await Promise.all(promises);
 
       return products;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  getProduct = async (req: JWTRequest) => {
+    try {
+      const id = req.params.id;
+      if (!id) {
+        throw new HttpException("product_id not found", 404);
+      }
+      const product = await this.productModel.findOne({
+        where: {
+          id
+        }
+      })
+      if (!product) {
+        throw new HttpException("Product not found", 404);
+      }
+
+      // Increase view by 1
+      await product.update({ view: product.view + 1 });
+      await product.save();
+      return product;
     } catch (error) {
       throw error;
     }

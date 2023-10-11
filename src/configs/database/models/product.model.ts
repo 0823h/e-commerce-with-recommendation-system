@@ -13,6 +13,7 @@ export interface IProduct extends Model {
   current_price: number;
   quantity: number;
   sold_amount: number;
+  view: number;
   deletedAt: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -36,6 +37,7 @@ const Product = db.sequelize?.define<IProduct>(
     current_price: { type: DataTypes.FLOAT, defaultValue: 0 },
     quantity: { type: DataTypes.INTEGER, defaultValue: 0 },
     sold_amount: { type: DataTypes.INTEGER, defaultValue: 0 },
+    view: { type: DataTypes.INTEGER, defaultValue: 0 }
   },
   {
     paranoid: true,
