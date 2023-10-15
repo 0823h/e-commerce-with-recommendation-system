@@ -33,20 +33,16 @@ class AuthService {
       }
       const n_users = (await this.userModel.findAndCountAll()).count;
       const hashPassword: string = await bcryptHashPassword(<string>payload.password);
-      const userCount = await this.userCountModel.findOne();
-      if (!userCount) {
-        throw new HttpException('User count not found', 404);
-      }
+
       const user = await this.userModel.create({
         ...payload,
-        user_id: userCount.user_count,
+        user_id: n_users,
         password: hashPassword,
         id: n_users,
       });
       if (!user) {
         throw new HttpException('Cannot create user', 409);
       }
-      await userCount.update({ user_count: userCount.user_count + 1 })
 
       // Create cart
       // const user_cart = await this.cartModel.create({

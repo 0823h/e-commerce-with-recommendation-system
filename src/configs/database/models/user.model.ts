@@ -34,7 +34,10 @@ const User = db.sequelize?.define<IUser>('User', {
   last_name: DataTypes.STRING,
   address: DataTypes.STRING,
   session_id: DataTypes.STRING,
-  is_guest: DataTypes.BOOLEAN,
+  is_guest: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
   deleted: { type: DataTypes.BOOLEAN, defaultValue: false },
 }) as ModelStatic<IUser>;
 export default User;
