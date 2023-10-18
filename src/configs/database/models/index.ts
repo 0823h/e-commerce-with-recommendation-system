@@ -1,5 +1,7 @@
 import Category from './category.model';
 import Feedback from './feedback.model';
+import Order from './order.model';
+import OrderItem from './order_item.model';
 import Product from './product.model';
 import ProductCategory from './product_category.model';
 import User from './user.model';
@@ -41,6 +43,17 @@ const associate = async (): Promise<void> => {
     foreignKey: 'product_id',
     targetKey: 'id',
   });
+
+  // Order
+  Order.hasMany(OrderItem, { foreignKey: 'order_id' });
+  OrderItem.belongsTo(Order, {
+    foreignKey: 'order_id',
+    targetKey: 'id'
+  })
+
+  OrderItem.belongsTo(Variant, { foreignKey: 'variant_id', targetKey: 'id' });
+
+
 };
 
 models.associate = associate;

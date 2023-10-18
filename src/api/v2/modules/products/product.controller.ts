@@ -194,6 +194,19 @@ class ProductController {
       return next(error);
     }
   }
+
+  getApriori = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const apriori = await this.productService.getApriori(req);
+      return res.status(200).json({
+        status: 200,
+        message: 'success',
+        data: apriori,
+      })
+    } catch (error) {
+      return next(error);
+    }
+  }
 }
 
 export default ProductController;

@@ -25,7 +25,7 @@ declare var require: {
 /**
  * @namespace Apriori
  */
-module Apriori {
+export module Apriori {
 
   export class AnalysisResult {
     frequentItemSets: { [itemSetSize: number]: FrequentItemSet[] };
@@ -153,9 +153,9 @@ module Apriori {
       return analysisResult;
     }
 
-    toOneElementItemSets(transactions): string[][] {
+    toOneElementItemSets(transactions: any): string[][] {
       var nestedArrayOfItem: string[][] = [];
-      transactions.forEach((transaction) => {
+      transactions.forEach((transaction: any) => {
         transaction.forEach((item: string) => { nestedArrayOfItem.push(new Array(item)); });
       });
       return ArrayUtils.toArraySet(nestedArrayOfItem);
@@ -203,7 +203,7 @@ module Apriori {
     // runs on the Node.js runtime
     showAnalysisResultFromFile(filename: string) {
       var self: Apriori.Algorithm = this;
-      require('fs').readFile(filename, 'utf8', (err, data: string) => {
+      require('fs').readFile(filename, 'utf8', (err: any, data: string) => {
         if (err) throw err;
         var transactions: string[][] = ArrayUtils.readCSVToArray(data, ',');
         var analysisResult: AnalysisResult = self.analyze(transactions);
@@ -265,8 +265,9 @@ module Apriori {
       itemSets.forEach((itemSetA: string[]) => {
         itemSets.forEach((itemSetB: string[]) => {
           if (ArrayUtils.getDiffArray(itemSetA, itemSetB).length > 0) {
-            var mergedArray = [].concat(itemSetA).concat(itemSetB),
-              joinedSet = ArrayUtils.toStringSet(mergedArray);
+            // var mergedArray = [].concat(itemSetA).concat(itemSetB),
+            var mergedArray = ([] as string[]).concat(itemSetA, itemSetB);
+            var joinedSet = ArrayUtils.toStringSet(mergedArray);
             if (joinedSet.length === length) joinedSetArray.push(joinedSet);
           }
         });
@@ -297,7 +298,7 @@ module Apriori {
         "([^\"\\" + delimiter + "\\r\\n]*))"), 'gi');
 
       var arrayOfRows: string[][] = [[]];
-      var matched: RegExpExecArray;
+      var matched: RegExpExecArray | null;
       while (!!(matched = regexp.exec(inputString))) {
         var matchedDelimiter: string = matched[1];
         if (matchedDelimiter.length && matchedDelimiter !== delimiter) {

@@ -14,6 +14,7 @@ const ProductRoute = Router();
 ProductRoute.get('/cf', auth, productController.collaborativeFiltering);
 ProductRoute.post('/cf/guest', productController.collaborativeFilteringForGuest);
 ProductRoute.post('/cbf', productController.contentBasedFiltering);
+ProductRoute.get('/:id/apriori', productController.getApriori);
 // ProductRoute.get('/reindex', auth, productController.reindexProduct);
 // ProductRoute.get('/reindex_feedback', productController.reindexFeedback);
 ProductRoute.get('/:id', productController.getVariantsOfProduct);

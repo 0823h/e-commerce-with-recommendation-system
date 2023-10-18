@@ -1,11 +1,13 @@
 import { Model, ModelStatic } from 'sequelize/types/model';
 import db from '@database';
 import { DataTypes } from 'sequelize';
+import Order from './order.model';
+import Variant from './variant.model';
 
 export interface IOrderItem extends Model {
   id: number;
-  order_id: string;
-  variant_id: number;
+  order_id: number;
+  variant_id: string;
   quantity: number;
   price: number;
   deletedAt: Date;
@@ -22,10 +24,18 @@ const OrderItem = db.sequelize?.define<IOrderItem>('OrderItem', {
     unique: true,
   },
   order_id: {
-    type: DataTypes.STRING,
+    type: DataTypes.INTEGER,
+    references: {
+      model: Order,
+      key: 'id',
+    },
   },
   variant_id: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
+    references: {
+      model: Variant,
+      key: 'id'
+    }
   },
   quantity: {
     type: DataTypes.INTEGER,

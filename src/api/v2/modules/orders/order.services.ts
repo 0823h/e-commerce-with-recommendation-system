@@ -221,7 +221,7 @@ class OrderService {
       let total_order_price = 0;
 
       const order = await this.orderModel.create({
-        id: objectId(),
+        // id: objectId(),
         user_id: user.id,
         address: req.body.address_id,
       });

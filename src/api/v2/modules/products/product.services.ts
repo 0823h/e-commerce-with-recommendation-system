@@ -4,6 +4,7 @@ import ProductCategory, { IProductCategory } from '@src/configs/database/models/
 import Feedback, { IFeedback } from '@src/configs/database/models/feedback.model';
 import User, { IUser } from '@src/configs/database/models/user.model';
 import Variant, { IVariant } from '@src/configs/database/models/variant.model';
+
 import { ModelStatic, Op } from 'sequelize';
 import { JwtPayload } from 'jsonwebtoken';
 import { Request as JWTRequest } from 'express-jwt';
@@ -13,6 +14,10 @@ import { objectId } from '../../utils/functions';
 import CF from '../../utils/collaborative_filtering';
 import ContentBasedFiltering from '../../utils/content_based_filtering';
 import es_client from '@src/configs/elasticsearch';
+import Order, { IOrder } from '@src/configs/database/models/order.model';
+import OrderItem, { IOrderItem } from '@src/configs/database/models/order_item.model';
+
+import { Apriori } from '@src/api/v2/utils/apriori';
 
 class ProductService {
   private readonly productModel: ModelStatic<IProduct>;
@@ -21,6 +26,8 @@ class ProductService {
   private readonly feedbackModel: ModelStatic<IFeedback>;
   private readonly userModel: ModelStatic<IUser>;
   private readonly variantModel: ModelStatic<IVariant>;
+  private readonly orderModel: ModelStatic<IOrder>;
+  private readonly orderItemModel: ModelStatic<IOrderItem>;
   constructor() {
     this.productModel = Product;
     this.productCategoryModel = ProductCategory;
@@ -28,6 +35,8 @@ class ProductService {
     this.feedbackModel = Feedback;
     this.userModel = User;
     this.variantModel = Variant;
+    this.orderModel = Order;
+    this.orderItemModel = OrderItem;
   }
 
   getAllProducts = async (req: JWTRequest): Promise<{ rows: IProduct[]; count: number }> => {
@@ -474,6 +483,61 @@ class ProductService {
       await product.save();
       return product;
     } catch (error) {
+      throw error;
+    }
+  }
+
+  getApriori = async (req: JWTRequest) => {
+    try {
+      const product_id = req.params.id;
+      if (!product_id) {
+        throw new HttpException("product_id not found", 404);
+      }
+      const product = await this.productModel.findOne({
+        where: {
+          id: product_id
+        }
+      })
+      if (!product) {
+        throw new HttpException("Product not found", 404);
+      }
+
+      const orders: any = await this.orderModel.findAll({
+        include: [{ model: OrderItem, include: [{ model: Variant, include: [{ model: Product }] }] }]
+      });
+
+
+
+      console.log(orders);
+
+      const transactions: any = orders.map((order: any) => {
+        const order_items_id = order.OrderItems.map((order_item: any) => {
+          // console.log(order_item.Variant.Product)  
+          return order_item.Variant.Product.id.toString()
+        })
+        return Array.from(new Set(order_items_id));
+      })
+
+      console.log(transactions);
+      let aprioriInstance = new Apriori.Algorithm(0.15, 0.6, true);
+      // 0.1 là ngưỡng tối thiểu
+      const result = aprioriInstance.analyze(transactions);
+      console.log({ fis: result.frequentItemSets });
+      console.log({ asc: result.associationRules })
+      const relatedProducts = result.associationRules
+        .filter(rule => rule.lhs.includes(product_id.toString()) && rule.confidence > 0.5) // lọc ra những luật có độ tin cậy > 0.5
+        .flatMap(rule => rule.rhs);
+      // return relatedProducts;
+
+      const product_ids = Array.from(new Set(relatedProducts.map(relatedProduct => parseInt(relatedProduct))));
+      const products = await this.productModel.findAll({
+        where: {
+          id: product_ids
+        }
+      })
+      return products;
+    } catch (error) {
+      console.log(error);
       throw error;
     }
   }
