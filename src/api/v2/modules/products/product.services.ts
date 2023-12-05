@@ -508,7 +508,7 @@ class ProductService {
 
 
 
-      console.log(orders);
+      // console.log(orders);
 
       const transactions: any = orders.map((order: any) => {
         const order_items_id = order.OrderItems.map((order_item: any) => {
@@ -518,12 +518,12 @@ class ProductService {
         return Array.from(new Set(order_items_id));
       })
 
-      console.log(transactions);
-      let aprioriInstance = new Apriori.Algorithm(0.15, 0.6, true);
+      // console.log({ transactions });
+      let aprioriInstance = new Apriori.Algorithm(0.15, 0.6, false);
       // 0.1 là ngưỡng tối thiểu
       const result = aprioriInstance.analyze(transactions);
       console.log({ fis: result.frequentItemSets });
-      console.log({ asc: result.associationRules })
+      // console.log({ asc: result.associationRules })
       const relatedProducts = result.associationRules
         .filter(rule => rule.lhs.includes(product_id.toString()) && rule.confidence > 0.5) // lọc ra những luật có độ tin cậy > 0.5
         .flatMap(rule => rule.rhs);
