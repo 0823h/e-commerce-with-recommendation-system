@@ -15,6 +15,7 @@ export interface IOrder extends Model {
   payment_method_id: number;
   status: string;
   is_fraud: boolean;
+  created_by: string;
   deletedAt: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -52,6 +53,11 @@ const Order = db.sequelize?.define<IOrder>(
       type: DataTypes.ENUM('Preparing order', 'Awaiting pickup', 'Picking up', 'Order picked up', 'Delivering', 'Delivered successfully', 'Delivery failed'),
       allowNull: false,
       defaultValue: 'Preparing order'
+    },
+    created_by: {
+      type: DataTypes.ENUM('admin', 'user'),
+      allowNull: false,
+      defaultValue: "user"
     },
     phone_number: {
       type: DataTypes.STRING,

@@ -30,31 +30,61 @@ class OrderService {
   }
   adminCreateOrder = async (req: JWTRequest): Promise<IOrder> => {
     try {
+      const { user_id, payment_method_id } = req.body;
       const order_items = req.body.order;
 
+      // Check if user_id and user existed
+      if (!user_id) {
+        throw new HttpException('User id not found', 404);
+      }
+      const user = await this.userModel.findByPk(user_id);
+      if (!user) {
+        throw new HttpException('User id not found', 404);
+      }
+
+      // Check if payment method existed
+      if (!payment_method_id) {
+        throw new HttpException('Payment method id not found', 404);
+      }
+      const payment_method = await this.paymentMethodModel.findByPk(payment_method_id);
+      if (!payment_method) {
+        throw new HttpException('Payment method id not found', 404);
+      }
+
+      // Create order
       const order = await this.orderModel.create({
-        id: objectId(),
-        user_id: req.body.user_id,
-        address: req.body.address_id,
+        // user_id: user.id,
+        user_id: user.id,
+        phone_number: req.body.phone_number,
+        // phone_number: user.phone_number,
+        email: req.body.email,
+        status: req.body.status,
+        address: req.body.address,
+        payment_method_id: payment_method.id,
+        created_by: 'admin'
       });
 
       let total_order_quantity = 0;
       let total_order_price = 0;
 
-      const createOrderPromise = order_items.map(async (order_item: any) => {
+      const createOrderItemsPromise = order_items.map(async (order_item: any) => {
         await this.orderItemModel.create({
           order_id: order.id,
           ...order_item,
         });
         total_order_quantity = total_order_quantity + order_item.quantity;
-        const product = await this.productModel.findByPk(order_item.product_id);
+        const variant = await this.variantModel.findByPk(order_item.variant_id);
+        if (!variant) {
+          throw new HttpException(`Variant with id ${order_item.variant_id} not found`, 404);
+        }
+        const product = await this.productModel.findByPk(variant.product_id);
         if (!product) {
           throw new HttpException(`Product with id ${order_item.product_id} not found`, 404);
         }
         total_order_price = total_order_price + order_item.quantity * product.current_price;
       });
 
-      await Promise.all(createOrderPromise);
+      await Promise.all(createOrderItemsPromise);
 
       await order.update({
         price: total_order_price,
@@ -239,6 +269,7 @@ class OrderService {
         status: 'Preparing order',
         address: req.body.address,
         payment_method_id: payment_method.id,
+        created_by: 'user'
       });
 
       // Create order items
@@ -277,6 +308,28 @@ class OrderService {
       throw error;
     }
   };
+
+  changeOrderStatus = async (req: JWTRequest) => {
+    try {
+      const { id } = req.params;
+
+      if (!id) {
+        throw new HttpException('Order id not found on param', 404);
+      }
+      const order = await this.orderModel.findByPk(id);
+      if (!order) {
+        throw new HttpException('Order id not found on param', 404);
+      }
+
+      order.update({
+        status: req.body.status,
+      })
+
+      return order;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default OrderService;
