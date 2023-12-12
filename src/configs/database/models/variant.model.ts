@@ -6,7 +6,6 @@ export interface IVariant extends Model {
   id: string;
   product_id: number;
   size: string;
-  colour: string;
   quantity: number;
   deletedAt: Date;
   createdAt: Date;
@@ -28,7 +27,6 @@ const Variant = db.sequelize?.define<IVariant>('Variant', {
     },
   },
   size: DataTypes.STRING,
-  colour: DataTypes.STRING,
   quantity: DataTypes.INTEGER,
 }) as ModelStatic<IVariant>;
 

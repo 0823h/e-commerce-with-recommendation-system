@@ -87,7 +87,7 @@ class ProductService {
         throw new HttpException('Product not found', 404);
       }
 
-      const { page, limit, colour } = req.query;
+      const { page, limit } = req.query;
       const sort = req.query.sort || 'DESC';
       const orderBy: string = (req.query.orderBy as string) || 'createdAt';
 
@@ -101,12 +101,12 @@ class ProductService {
         query.limit = parseInt(limit as string, 10);
       }
 
-      if (colour) {
-        query.where = {
-          ...query.where,
-          colour: { [Op.iLike]: `%${colour}%` },
-        };
-      }
+      // if (colour) {
+      //   query.where = {
+      //     ...query.where,
+      //     colour: { [Op.iLike]: `%${colour}%` },
+      //   };
+      // }
 
       console.log('Query: ', query);
 
