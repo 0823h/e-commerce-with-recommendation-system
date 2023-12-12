@@ -16,6 +16,7 @@ export interface IOrder extends Model {
   status: string;
   is_fraud: boolean;
   created_by: string;
+  customer_name: string;
   deletedAt: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -73,6 +74,9 @@ const Order = db.sequelize?.define<IOrder>(
       },
       allowNull: false,
       // defaultValue: 1
+    },
+    customer_name: {
+      type: DataTypes.STRING,
     },
     is_fraud: {
       type: DataTypes.BOOLEAN,

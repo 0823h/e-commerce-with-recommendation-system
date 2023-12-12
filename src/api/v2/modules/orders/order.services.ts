@@ -55,6 +55,7 @@ class OrderService {
       const order = await this.orderModel.create({
         // user_id: user.id,
         user_id: user.id,
+        customer_name: req.body.customer_name,
         phone_number: req.body.phone_number,
         // phone_number: user.phone_number,
         email: req.body.email,
@@ -264,6 +265,7 @@ class OrderService {
         // user_id: user.id,
         user_id: 1,
         phone_number: req.body.phone_number,
+        customer_name: user.first_name + user.last_name,
         // phone_number: user.phone_number,
         email: req.body.email,
         status: 'Preparing order',

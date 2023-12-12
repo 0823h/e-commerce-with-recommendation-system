@@ -10,7 +10,8 @@ export const adminCreateOrderBody = {
     order: Joi.array().items(
       Joi.object({ variant_id: Joi.string().optional(), quantity: Joi.number().optional() }).optional()
     ),
-    status: Joi.string().valid('Preparing order', 'Awaiting pickup', 'Picking up', 'Order picked up', 'Delivering', 'Delivered successfully', 'Delivery failed')
+    status: Joi.string().valid('Preparing order', 'Awaiting pickup', 'Picking up', 'Order picked up', 'Delivering', 'Delivered successfully', 'Delivery failed'),
+    name: Joi.string().required()
   }),
 };
 
