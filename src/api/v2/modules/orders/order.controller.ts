@@ -100,6 +100,7 @@ class OrderController {
   userCreateOrder = async (req: JWTRequest, res: Response, next: NextFunction) => {
     try {
       const order = await this.orderService.userCreateOrder(req);
+      console.log({ order })
       return res.status(200).json({
         status: 200,
         message: 'success',

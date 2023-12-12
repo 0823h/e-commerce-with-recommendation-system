@@ -7,6 +7,7 @@ import AdminRoute from './admins/admin.route';
 import OrderRoute from './orders/order.route';
 import userRoute from './users/user.route';
 import webhookRoute from './webhooks/webhooks.route';
+import PaymentMethodRoute from './payment_methods/payment_method.route';
 
 const router = Router();
 
@@ -18,5 +19,6 @@ router.use('/admins', AdminRoute);
 router.use('/orders', OrderRoute);
 router.use('/users', userRoute);
 router.use('/webhook', webhookRoute);
+router.use('/payment_method', PaymentMethodRoute);
 
 export default router;

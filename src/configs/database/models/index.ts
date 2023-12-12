@@ -2,6 +2,7 @@ import Category from './category.model';
 import Feedback from './feedback.model';
 import Order from './order.model';
 import OrderItem from './order_item.model';
+import PaymentMethod from './payment_method.model';
 import Product from './product.model';
 import ProductCategory from './product_category.model';
 import User from './user.model';
@@ -50,6 +51,7 @@ const associate = async (): Promise<void> => {
     foreignKey: 'order_id',
     targetKey: 'id'
   })
+  // Order.hasOne(PaymentMethod, { foreignKey: 'payment_method_id' });
 
   OrderItem.belongsTo(Variant, { foreignKey: 'variant_id', targetKey: 'id' });
 

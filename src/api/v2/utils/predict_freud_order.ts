@@ -3,6 +3,7 @@ import * as tf from '@tensorflow/tfjs';
 import { DecisionTreeClassifier } from 'scikitjs';
 import * as sk from 'scikitjs';
 import { Op } from 'sequelize';
+const dfd = require("danfojs-node")
 
 export const training = async () => {
   try {
@@ -85,10 +86,26 @@ export const training = async () => {
 
 export const decisionTree = async (order_info: IOrder) => {
   try {
+    // dfd.readCSV("./AmazonSaleReport.csv").then((df: any) => {
+    //   console.log("df.head().print()")
+    //   df.head().print();
+    // }).catch((err: any) => {
+    //   console.log(err);
+    // })
+
+
+
+    // let df = await dfd.readCSV(
+    //   "https://raw.githubusercontent.com/adejumoridwan/Motorcycle-Sales-Dashboard/main/data/sales_data.csv"
+    // );
+    // print(df.head());
+
     const orders: IOrder[] = await Order.findAll({
-      attributes: ['total_order_amount', 'price', 'address', 'phone_number', 'email', 'is_fraud'],
+      attributes: ['total_order_amount', 'price', 'phone_number', 'email', 'is_fraud'],
       where: { [Op.or]: [{ is_fraud: true }, { is_fraud: false }] },
     });
+
+    console.log(orders);
 
     const x = orders.map((order) => [
       order.total_order_amount,
@@ -97,6 +114,7 @@ export const decisionTree = async (order_info: IOrder) => {
       order.phone_number.length,
       order.email.length,
     ]);
+    console.log(x);
     const y = orders.map((order) => (order.is_fraud ? 1 : 0));
 
     sk.setBackend(tf);

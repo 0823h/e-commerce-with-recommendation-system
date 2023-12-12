@@ -18,6 +18,7 @@ export const userUpdateBody = {
     password: Joi.string().optional(),
     first_name: Joi.string().optional(),
     last_name: Joi.string().optional(),
+    address: Joi.string().optional()
   }),
 };
 

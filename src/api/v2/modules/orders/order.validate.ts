@@ -12,10 +12,13 @@ export const adminCreateOrderBody = {
 
 export const userCreateOrderBody = {
   body: Joi.object({
-    address_id: Joi.number().required(),
+    address: Joi.string().required(),
+    email: Joi.string().required(),
+    phone_number: Joi.string().required(),
     order: Joi.array().items(
       Joi.object({ variant_id: Joi.string().optional(), quantity: Joi.number().optional() }).optional()
     ),
+    payment_method_id: Joi.number().required(),
   }),
 };
 

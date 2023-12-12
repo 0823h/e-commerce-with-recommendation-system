@@ -2,15 +2,18 @@ import { DataTypes, Model, ModelStatic } from 'sequelize';
 import db from '@database';
 import User from './user.model';
 import Address from './address.model';
+import PaymentMethod from './payment_method.model';
 
 export interface IOrder extends Model {
   id: number;
   user_id: number;
   total_order_amount: number;
   price: number;
-  address_id: string;
+  address: string;
   phone_number: string;
   email: string;
+  payment_method_id: number;
+  status: string;
   is_fraud: boolean;
   deletedAt: Date;
   createdAt: Date;
@@ -40,18 +43,30 @@ const Order = db.sequelize?.define<IOrder>(
     price: {
       type: DataTypes.FLOAT,
     },
-    address_id: {
-      type: DataTypes.INTEGER,
-      references: {
-        model: Address,
-        key: 'id'
-      }
+    address: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'Vietnam'
+    },
+    status: {
+      type: DataTypes.ENUM('Preparing order', 'Awaiting pickup', 'Picking up', 'Order picked up', 'Delivering', 'Delivered successfully', 'Delivery failed'),
+      allowNull: false,
+      defaultValue: 'Preparing order'
     },
     phone_number: {
       type: DataTypes.STRING,
     },
     email: {
       type: DataTypes.STRING,
+    },
+    payment_method_id: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: PaymentMethod,
+        key: 'id',
+      },
+      allowNull: false,
+      // defaultValue: 1
     },
     is_fraud: {
       type: DataTypes.BOOLEAN,

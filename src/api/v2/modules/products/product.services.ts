@@ -518,8 +518,10 @@ class ProductService {
         return Array.from(new Set(order_items_id));
       })
 
-      // console.log({ transactions });
-      let aprioriInstance = new Apriori.Algorithm(0.15, 0.6, false);
+      console.log({ transactions });
+      let aprioriInstance = new Apriori.Algorithm(0.15, 0.6, true);
+
+      console.log(aprioriInstance);
       // 0.1 là ngưỡng tối thiểu
       const result = aprioriInstance.analyze(transactions);
       console.log({ fis: result.frequentItemSets });

@@ -21,7 +21,7 @@ userRoute.delete('/address/:address_id', auth, userController.deleteAddress);
 
 // Get Self Info
 userRoute.get('/self', auth, userController.retrieveSelfUser);
-userRoute.put('/self', auth, userController.updateUser);
+userRoute.put('/self', auth, validate(userUpdateBody as schema), userController.updateUser);
 
 userRoute.post('/guests', userController.createGuest);
 
