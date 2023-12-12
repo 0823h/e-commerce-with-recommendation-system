@@ -229,6 +229,7 @@ class OrderService {
 
       const query: IQuery = {
         order: [[`${orderBy}`, `${(sort as string).toUpperCase()}`]],
+        // include: { model: OrderItem, through: { attributes: [] } }
       };
 
       query.offset = (page - 1) * limit;
@@ -329,6 +330,32 @@ class OrderService {
 
       return order;
     } catch (error) {
+      throw error;
+    }
+  }
+
+
+  getOrderProducts = async (req: JWTRequest) => {
+    try {
+      const id = req.params.id;
+      if (!id) {
+        throw new HttpException("Order id not found", 404);
+      }
+
+      const order_items = await this.orderItemModel.findAll({
+        where: {
+          order_id: id
+        },
+        include: [{
+          model: Variant,
+          include: [{ model: Product }]
+        },
+        ]
+      })
+
+      return order_items
+    } catch (error) {
+      console.log(error);
       throw error;
     }
   }

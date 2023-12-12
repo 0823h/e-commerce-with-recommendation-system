@@ -54,6 +54,7 @@ const associate = async (): Promise<void> => {
   // Order.hasOne(PaymentMethod, { foreignKey: 'payment_method_id' });
 
   OrderItem.belongsTo(Variant, { foreignKey: 'variant_id', targetKey: 'id' });
+  // Variant.hasMany(OrderItem)
 
 
 };

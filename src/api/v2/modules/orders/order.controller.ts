@@ -110,6 +110,20 @@ class OrderController {
     catch (error) {
       return next(error);
     }
+  };
+
+  getOrderProducts = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const orders = await this.orderService.getOrderProducts(req);
+      return res.status(200).json({
+        status: 200,
+        message: 'success',
+        data: orders,
+      });
+    } catch (error) {
+      return next(error);
+    }
+
   }
 }
 
