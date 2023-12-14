@@ -18,5 +18,6 @@ OrderRoute.post('/vnpay', auth, orderController.vnpay);
 OrderRoute.get('/train', orderController.trainModel);
 OrderRoute.get('/get-unique-id', orderController.getUniqueId);
 OrderRoute.get('/:id/products-name', orderController.getOrderProducts);
+OrderRoute.put('/:id/assign-shipper', orderController.assignToShipper);
 
 export default OrderRoute;

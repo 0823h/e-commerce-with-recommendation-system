@@ -123,7 +123,19 @@ class OrderController {
     } catch (error) {
       return next(error);
     }
+  }
 
+  assignToShipper = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const order = await this.orderService.assignToShipper(req);
+      return res.status(200).json({
+        status: 200,
+        message: 'success',
+        data: order,
+      });
+    } catch (error) {
+      return next(error);
+    }
   }
 }
 

@@ -12,4 +12,7 @@ const AdminRoute = Router();
 AdminRoute.post('/', validate(createAdminBody as schema), adminController.createAdmin);
 AdminRoute.post('/login', validate(signInBody as schema), adminController.signIn);
 
+
+// Shipper 
+
 export default AdminRoute;

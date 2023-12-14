@@ -3,6 +3,7 @@ import db from '@database';
 import User from './user.model';
 import Address from './address.model';
 import PaymentMethod from './payment_method.model';
+import Admin from './admin.model';
 
 export interface IOrder extends Model {
   id: number;
@@ -17,6 +18,7 @@ export interface IOrder extends Model {
   is_fraud: boolean;
   created_by: string;
   customer_name: string;
+  ship_assigned_to: number;
   deletedAt: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -81,6 +83,13 @@ const Order = db.sequelize?.define<IOrder>(
     is_fraud: {
       type: DataTypes.BOOLEAN,
     },
+    assigned_to_shipper: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: Admin,
+        key: 'id'
+      }
+    }
   },
   {
     paranoid: true,

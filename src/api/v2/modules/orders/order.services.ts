@@ -3,6 +3,7 @@ import OrderItem, { IOrderItem } from '@models/order_item.model';
 import Product, { IProduct } from '@models/product.model';
 import User, { IUser } from '@models/user.model';
 import Variant, { IVariant } from '@models/variant.model';
+import Admin, { IAdmin } from '@src/configs/database/models/admin.model';
 import { ModelStatic } from 'sequelize';
 import { Request as JWTRequest } from 'express-jwt';
 import { decisionTree, training } from '../../utils/predict_freud_order';
@@ -20,6 +21,7 @@ class OrderService {
   private readonly userModel: ModelStatic<IUser>;
   private readonly variantModel: ModelStatic<IVariant>;
   private readonly paymentMethodModel: ModelStatic<IPaymentMethod>;
+  private readonly adminModel: ModelStatic<IAdmin>;
   constructor() {
     this.orderModel = Order;
     this.orderItemModel = OrderItem;
@@ -27,6 +29,7 @@ class OrderService {
     this.userModel = User;
     this.variantModel = Variant;
     this.paymentMethodModel = PaymentMethod;
+    this.adminModel = Admin;
   }
   adminCreateOrder = async (req: JWTRequest): Promise<IOrder> => {
     try {
@@ -356,6 +359,45 @@ class OrderService {
       return order_items
     } catch (error) {
       console.log(error);
+      throw error;
+    }
+  }
+
+  // Admin service
+  assignToShipper = async (req: JWTRequest) => {
+    try {
+      const id = req.params.id;
+      if (!id) {
+        throw new HttpException("Order id not found", 404);
+      }
+
+      const order = await this.orderModel.findByPk(id);
+      if (!order) {
+        throw new HttpException("Order not found", 404);
+      }
+
+      const { shipper_id } = req.body;
+      if (shipper_id) {
+        throw new HttpException("Shipper id not found", 404);
+      }
+
+      const shipper = await this.adminModel.findOne({
+        where: {
+          id: shipper_id,
+          role: 'Shipper'
+        }
+      });
+
+      if (!shipper) {
+        throw new HttpException("Shipper not found", 404);
+      }
+
+      await order.update({
+        assigned_to_shipper: shipper.id
+      })
+
+      return order;
+    } catch (error) {
       throw error;
     }
   }
