@@ -10,6 +10,7 @@ class OrderController {
 
   adminCreateOrder = async (req: JWTRequest, res: Response, next: NextFunction) => {
     try {
+      console.log(req.body)
       const order = await this.orderService.adminCreateOrder(req);
       return res.status(200).json({
         status: 200,
@@ -100,7 +101,6 @@ class OrderController {
   userCreateOrder = async (req: JWTRequest, res: Response, next: NextFunction) => {
     try {
       const order = await this.orderService.userCreateOrder(req);
-      console.log({ order })
       return res.status(200).json({
         status: 200,
         message: 'success',
@@ -125,11 +125,24 @@ class OrderController {
     }
   }
 
+  changeOrderStatus = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const order = await this.orderService.changeOrderStatus(req);
+      return res.status(200).json({
+        status: 204,
+        message: 'success',
+        data: order
+      })
+    } catch (error) {
+      return next(error);
+    }
+  }
+
   assignToShipper = async (req: JWTRequest, res: Response, next: NextFunction) => {
     try {
       const order = await this.orderService.assignToShipper(req);
-      return res.status(200).json({
-        status: 200,
+      return res.status(204).json({
+        status: 204,
         message: 'success',
         data: order,
       });

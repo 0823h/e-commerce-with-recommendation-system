@@ -209,7 +209,7 @@ class OrderService {
     let key;
     for (key in obj) {
       if (obj.hasOwnProperty(key)) {
-        str.push(encodeURIComponent(key));
+        str.push(encodeURIComponent(key)); ``
       }
     }
     str.sort();
@@ -324,12 +324,14 @@ class OrderService {
       }
       const order = await this.orderModel.findByPk(id);
       if (!order) {
-        throw new HttpException('Order id not found on param', 404);
+        throw new HttpException('Order not found', 404);
       }
 
-      order.update({
+      await order.update({
         status: req.body.status,
       })
+
+      await order.save();
 
       return order;
     } catch (error) {
@@ -377,14 +379,15 @@ class OrderService {
       }
 
       const { shipper_id } = req.body;
-      if (shipper_id) {
+      if (!shipper_id) {
         throw new HttpException("Shipper id not found", 404);
       }
 
+      // console.log({ body: req.body });
       const shipper = await this.adminModel.findOne({
         where: {
           id: shipper_id,
-          role: 'Shipper'
+          role: 'shipper'
         }
       });
 
@@ -397,6 +400,14 @@ class OrderService {
       })
 
       return order;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  getShipperOrders = async (req: JWTRequest) => {
+    try {
+
     } catch (error) {
       throw error;
     }

@@ -34,8 +34,14 @@ export const orderPayBody = {
   }),
 };
 
-export const updateOrderStatus = {
+export const changeOrderStatus = {
   body: Joi.object({
-    status: Joi.string().valid('Preparing order', 'Awaiting pickup', 'Picking up', 'Order picked up', 'Delivering', 'Delivered successfully', 'Delivery failed')
+    status: Joi.string().valid('Preparing order', 'Awaiting pickup', 'Picking up', 'Order picked up', 'Delivering', 'Delivered successfully', 'Delivery failed').required()
+  })
+}
+
+export const assignToShipper = {
+  body: Joi.object({
+    shipper_id: Joi.number().required()
   })
 }
