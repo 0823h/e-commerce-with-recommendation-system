@@ -266,8 +266,8 @@ class OrderService {
 
       // Create order
       const order = await this.orderModel.create({
-        // user_id: user.id,
-        user_id: 1,
+        user_id: user.id,
+        // user_id: 1,
         phone_number: req.body.phone_number,
         customer_name: user.first_name + user.last_name,
         // phone_number: user.phone_number,

@@ -7,15 +7,18 @@ import { HttpException } from '../../utils/http-exception';
 import { bcryptHashPassword, objectId } from '../../utils/functions';
 import { JwtPayload } from 'jsonwebtoken';
 import UserCount, { IUserCount } from '@src/configs/database/models/user_count.model';
+import Order, { IOrder } from '@src/configs/database/models/order.model';
 
 class UserService {
   private readonly userModel: ModelStatic<IUser>;
   private readonly addressModel: ModelStatic<IAddress>;
   private readonly userCountModel: ModelStatic<IUserCount>;
+  private readonly orderModel: ModelStatic<IOrder>;
   constructor() {
     this.userModel = User;
     this.addressModel = Address;
     this.userCountModel = UserCount;
+    this.orderModel = Order;
   }
 
   getUsers = async (req: JWTRequest) => {
@@ -306,6 +309,40 @@ class UserService {
         password: hashPassword
       });
       await user.save();
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  getOrders = async (req: JWTRequest) => {
+    try {
+      const { user_id } = (<JwtPayload>req.auth).data;
+      const user = await this.userModel.findByPk(user_id);
+      if (!user) {
+        throw new HttpException('User not found', 404);
+      }
+
+      console.log({ user_id })
+
+      const page = parseInt(req.query.page as string, 10) || 1;
+      const limit = parseInt(req.query.limit as string, 10) || 10;
+      const sort = req.query.sort || 'DESC';
+      const orderBy: string = (req.query.orderBy as string) || 'createdAt';
+
+      const query: IQuery = {
+        where: {
+          user_id: user.id
+        },
+        order: [[`${orderBy}`, `${(sort as string).toUpperCase()}`]],
+      };
+
+      query.offset = (page - 1) * limit;
+      query.limit = limit;
+
+      const orders = await this.orderModel.findAndCountAll(query);
+      console.log(orders)
+
+      return orders
     } catch (error) {
       throw error;
     }

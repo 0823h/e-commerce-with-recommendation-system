@@ -196,7 +196,35 @@ class UserController {
     }
   }
 
+  getOrders = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const orders = await this.userService.getOrders(req);
 
+      const page = parseInt(req.query.page as string, 10) || 1;
+      const limit = parseInt(req.query.limit as string, 10) || 10;
+
+      const page_count = orders.rows.length;
+      const total_pages = Math.ceil(orders.count / limit);
+      const total_count = orders.count;
+
+      return res.status(200).json({
+        status: 200,
+        message: 'success',
+        data: {
+          records: orders.rows,
+          metadata: {
+            page,
+            limit,
+            page_count,
+            total_pages,
+            total_count,
+          },
+        }
+      })
+    } catch (error) {
+      return next(error);
+    }
+  }
 }
 
 export default UserController;
