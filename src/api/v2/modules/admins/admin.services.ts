@@ -60,7 +60,7 @@ class AdminService {
         `${process.env.ACCESS_TOKEN_TIME_EXPIRED}`
       );
 
-      return { admin_id: admin.id, access_token };
+      return { admin: admin, access_token };
     } catch (err) {
       console.log(err);
       throw err;
