@@ -1,14 +1,18 @@
 import Admin, { IAdmin } from '@models/admin.model';
 import { Request as JWTRequest } from 'express-jwt';
 import { JwtPayload } from 'jsonwebtoken';
-import { ModelStatic } from 'sequelize';
+import { ModelStatic, Op } from 'sequelize';
 import { HttpException } from '../../utils/http-exception';
 import { bcryptComparePassword, bcryptHashPassword, generateToken } from '../../utils/functions';
+import Order, { IOrder } from '@src/configs/database/models/order.model';
+import { IQuery } from '../products/product.interface';
 
 class AdminService {
   private readonly adminModel: ModelStatic<IAdmin>;
+  private readonly orderModel: ModelStatic<IOrder>;
   constructor() {
     this.adminModel = Admin;
+    this.orderModel = Order;
   }
 
   createAdmin = async (req: JWTRequest): Promise<IAdmin> => {
@@ -66,6 +70,46 @@ class AdminService {
       throw err;
     }
   };
+
+  // Shipper
+  getOrdersForShipper = async (req: JWTRequest) => {
+    try {
+      const { admin_id } = (<JwtPayload>req.auth).data;
+
+      const page = parseInt(req.query.page as string, 10) || 1;
+      const limit = parseInt(req.query.limit as string, 10) || 10;
+      const sort = req.query.sort || 'DESC';
+      const orderBy: string = (req.query.orderBy as string) || 'createdAt';
+      const { status } = req.query;
+
+      const query: IQuery = {
+        where: {
+          assigned_to_shipper: admin_id
+        },
+        order: [[`${orderBy}`, `${(sort as string).toUpperCase()}`]],
+      };
+
+      query.offset = (page - 1) * limit;
+      query.limit = limit;
+
+
+      if (status) {
+        console.log({ status })
+        query.where = {
+          ...query.where,
+          status: { [Op.in]: [status] },
+        };
+      }
+
+      const orders = await this.orderModel.findAndCountAll(query);
+
+      return orders
+
+
+    } catch (err) {
+      throw err;
+    }
+  }
 }
 
 export default AdminService;
