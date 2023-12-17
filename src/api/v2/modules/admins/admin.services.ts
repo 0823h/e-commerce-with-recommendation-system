@@ -110,6 +110,38 @@ class AdminService {
       throw err;
     }
   }
+
+  getAdmins = async (req: JWTRequest) => {
+    try {
+      const page = parseInt(req.query.page as string, 10) || 1;
+      const limit = parseInt(req.query.limit as string, 10) || 10;
+      const sort = req.query.sort || 'DESC';
+      const orderBy: string = (req.query.orderBy as string) || 'createdAt';
+      const { role } = req.query;
+
+      const query: IQuery = {
+        order: [[`${orderBy}`, `${(sort as string).toUpperCase()}`]],
+      };
+
+      query.offset = (page - 1) * limit;
+      query.limit = limit;
+
+
+      if (role) {
+        query.where = {
+          ...query.where,
+          role
+        };
+      }
+
+      const admins = await this.adminModel.findAndCountAll(query);
+
+      return admins
+
+    } catch (err) {
+      throw err;
+    }
+  }
 }
 
 export default AdminService;

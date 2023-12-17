@@ -12,6 +12,7 @@ const adminController = new AdminController(adminService);
 const AdminRoute = Router();
 
 AdminRoute.post('/', validate(createAdminBody as schema), adminController.createAdmin);
+AdminRoute.get('/', auth, adminRoleCheck(['superadmin', 'staff', 'shipper']), adminController.getAdmins);
 AdminRoute.post('/login', validate(signInBody as schema), adminController.signIn);
 
 

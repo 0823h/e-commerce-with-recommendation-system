@@ -63,6 +63,36 @@ class AdminController {
       return next(error);
     }
   }
+
+  getAdmins = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const admins = await this.adminService.getAdmins(req);
+
+      const page = parseInt(req.query.page as string, 10) || 1;
+      const limit = parseInt(req.query.limit as string, 10) || 10;
+
+      const page_count = admins.rows.length;
+      const total_pages = Math.ceil(admins.count / limit);
+      const total_count = admins.count;
+
+      return res.status(200).json({
+        status: 200,
+        message: 'success',
+        data: {
+          records: admins.rows,
+          metadata: {
+            page,
+            limit,
+            page_count,
+            total_pages,
+            total_count,
+          },
+        }
+      })
+    } catch (error) {
+      return next(error);
+    }
+  }
 }
 
 export default AdminController;
