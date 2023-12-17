@@ -4,7 +4,7 @@ import Product, { IProduct } from '@models/product.model';
 import User, { IUser } from '@models/user.model';
 import Variant, { IVariant } from '@models/variant.model';
 import Admin, { IAdmin } from '@src/configs/database/models/admin.model';
-import { ModelStatic } from 'sequelize';
+import { ModelStatic, Op } from 'sequelize';
 import { Request as JWTRequest } from 'express-jwt';
 import { decisionTree, training } from '../../utils/predict_freud_order';
 import { HttpException } from '../../utils/http-exception';
@@ -405,11 +405,35 @@ class OrderService {
     }
   }
 
-  getShipperOrders = async (req: JWTRequest) => {
+  getStatistics = async (req: JWTRequest) => {
     try {
+      const { start_date, end_date } = req.query
+      // 2023-10-13 -> 2023-11-13
 
+      const object = {
+        total_money: 0,
+        number_of_orders: 0,
+      }
+
+      const orders = await this.orderModel.findAndCountAll(
+        {
+          where: {
+            createdAt: {
+              [Op.between]: [start_date, end_date]
+            },
+            status: 'Delivered successfully',
+          }
+        }
+      )
+
+      orders.rows.map((order) => {
+        object.total_money += order.price;
+        object.number_of_orders += order.total_order_amount;
+      })
+
+      return object;
     } catch (error) {
-      throw error;
+      throw error
     }
   }
 }

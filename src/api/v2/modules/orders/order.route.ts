@@ -16,6 +16,7 @@ OrderRoute.post('/admin', validate(adminCreateOrderBody as schema), orderControl
 OrderRoute.post('/user', auth, validate(userCreateOrderBody as schema), orderController.userCreateOrder);
 OrderRoute.post('/vnpay', auth, orderController.vnpay);
 OrderRoute.get('/train', orderController.trainModel);
+OrderRoute.get('/get-statistics', orderController.getStatistics);
 OrderRoute.get('/get-unique-id', orderController.getUniqueId);
 OrderRoute.get('/:id/products-name', orderController.getOrderProducts);
 OrderRoute.put('/:id/assign-shipper', auth, adminRoleCheck(['superadmin', 'staff']), validate(assignToShipper as schema), orderController.assignToShipper);

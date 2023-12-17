@@ -150,6 +150,23 @@ class OrderController {
       return next(error);
     }
   }
+
+  getStatistics = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const statistics = await this.orderService.getStatistics(req);
+      return res.status(200).json({
+        status: 200,
+        message: 'success',
+        data: {
+          ...statistics,
+          start_date: req.query.start_date,
+          end_date: req.query.end_date
+        },
+      });
+    } catch (error) {
+      return next(error);
+    }
+  }
 }
 
 export default OrderController;
