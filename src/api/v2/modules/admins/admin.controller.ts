@@ -93,6 +93,23 @@ class AdminController {
       return next(error);
     }
   }
+
+  getTotalShippingAmount = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const total_amount = await this.adminService.getTotalShippingAmount(req);
+
+      return res.status(200).json({
+        status: 200,
+        message: 'success',
+        data: {
+          total_amount
+        }
+      })
+    } catch (error) {
+      return next(error);
+    }
+
+  }
 }
 
 export default AdminController;

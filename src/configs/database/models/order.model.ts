@@ -19,6 +19,7 @@ export interface IOrder extends Model {
   created_by: string;
   customer_name: string;
   ship_assigned_to: number;
+  paidAt: Date;
   deletedAt: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -89,6 +90,9 @@ const Order = db.sequelize?.define<IOrder>(
         model: Admin,
         key: 'id'
       }
+    },
+    paidAt: {
+      type: DataTypes.DATE,
     }
   },
   {

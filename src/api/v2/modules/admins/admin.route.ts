@@ -15,8 +15,8 @@ AdminRoute.post('/', validate(createAdminBody as schema), adminController.create
 AdminRoute.get('/', auth, adminRoleCheck(['superadmin', 'staff', 'shipper']), adminController.getAdmins);
 AdminRoute.post('/login', validate(signInBody as schema), adminController.signIn);
 
-
 // Shipper 
 AdminRoute.get('/shippers/get-shipping-orders', auth, adminRoleCheck(['shipper']), adminController.getOrdersForShipper)
+AdminRoute.get('/shippers/get-total-shipping-amount', auth, adminRoleCheck(['shipper']), adminController.getTotalShippingAmount);
 
 export default AdminRoute;

@@ -6,6 +6,7 @@ import { HttpException } from '../../utils/http-exception';
 import { bcryptComparePassword, bcryptHashPassword, generateToken } from '../../utils/functions';
 import Order, { IOrder } from '@src/configs/database/models/order.model';
 import { IQuery } from '../products/product.interface';
+import { ppid } from 'process';
 
 class AdminService {
   private readonly adminModel: ModelStatic<IAdmin>;
@@ -138,6 +139,31 @@ class AdminService {
 
       return admins
 
+    } catch (err) {
+      throw err;
+    }
+  }
+
+  getTotalShippingAmount = async (req: JWTRequest) => {
+    try {
+      const { admin_id } = (<JwtPayload>req.auth).data;
+
+      const orders = await this.orderModel.findAll({
+        where: {
+          assigned_to_shipper: admin_id,
+          status: {
+            [Op.notIn]: ['Delivered successfully', 'Delivery failed']
+          }
+        }
+      })
+
+      let total_amount = 0;
+
+      orders.map((order) => {
+        total_amount += order.price;
+      })
+
+      return total_amount;
     } catch (err) {
       throw err;
     }
