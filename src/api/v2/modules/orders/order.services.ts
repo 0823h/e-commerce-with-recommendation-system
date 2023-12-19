@@ -9,7 +9,7 @@ import { Request as JWTRequest } from 'express-jwt';
 import { decisionTree, training } from '../../utils/predict_freud_order';
 import { HttpException } from '../../utils/http-exception';
 // import { vnpay_pay } from '../../utils/vnpay';
-import moment from 'moment';
+import moment, { now } from 'moment';
 import { JwtPayload } from 'jsonwebtoken';
 import { objectId } from '../../utils/functions';
 import { IQuery } from '../products/product.interface';
@@ -121,17 +121,47 @@ class OrderService {
         throw new HttpException('User not found', 403);
       }
 
-      const { total_order_amount, price } = req.body;
+      const { email, phone_number, address } = req.body;
 
       const order = await this.orderModel.create({
-        id: objectId(),
-        user_id,
-        price,
-        total_order_amount,
-        address: user.address,
-        phone_number: user.phone_number,
-        email: user.email,
-        is_fraud: false,
+        user_id: user.id,
+        phone_number: req.body.phone_number,
+        customer_name: user.first_name + user.last_name,
+        email: req.body.email,
+        status: 'Preparing order',
+        address: req.body.address,
+        payment_method_id: 2, // VNPAY
+        paidAt: moment(),
+        created_by: 'user'
+      });
+
+      const order_items = req.body.order;
+      let total_order_quantity = 0;
+      let total_order_price = 0;
+
+      const createOrderItemsPromise = order_items.map(async (order_item: any) => {
+        await this.orderItemModel.create({
+          order_id: order.id,
+          ...order_item,
+        });
+        total_order_quantity = total_order_quantity + order_item.quantity;
+        const variant = await this.variantModel.findByPk(order_item.variant_id);
+        if (!variant) {
+          throw new HttpException(`Variant with id ${order_item.variant_id} not found`, 404);
+        }
+        const product = await this.productModel.findByPk(variant.product_id);
+        if (!product) {
+          throw new HttpException(`Product with id ${order_item.product_id} not found`, 404);
+        }
+        total_order_price = total_order_price + order_item.quantity * product.current_price;
+      });
+
+      await Promise.all(createOrderItemsPromise);
+
+      // Update order with price and total amount
+      await order.update({
+        price: total_order_price,
+        total_order_amount: total_order_quantity,
       });
 
       process.env.TZ = 'Asia/Ho_Chi_Minh';
