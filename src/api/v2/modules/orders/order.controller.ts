@@ -167,6 +167,20 @@ class OrderController {
       return next(error);
     }
   }
+
+  guestCreateOrder = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const order = await this.orderService.guestCreateOrder(req);
+      return res.status(200).json({
+        status: 200,
+        message: 'success',
+        data: order,
+      });
+    }
+    catch (error) {
+      return next(error);
+    }
+  }
 }
 
 export default OrderController;

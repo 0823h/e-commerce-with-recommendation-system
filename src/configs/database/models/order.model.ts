@@ -59,7 +59,7 @@ const Order = db.sequelize?.define<IOrder>(
       defaultValue: 'Preparing order'
     },
     created_by: {
-      type: DataTypes.ENUM('admin', 'user'),
+      type: DataTypes.ENUM('admin', 'user', 'guest'),
       allowNull: false,
       defaultValue: "user"
     },

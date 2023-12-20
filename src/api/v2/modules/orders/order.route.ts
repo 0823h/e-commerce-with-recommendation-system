@@ -14,6 +14,7 @@ const OrderRoute = Router();
 OrderRoute.get('/', auth, adminRoleCheck(['superadmin', 'staff']), orderController.getOrders);
 OrderRoute.post('/admin', validate(adminCreateOrderBody as schema), orderController.adminCreateOrder);
 OrderRoute.post('/user', auth, validate(userCreateOrderBody as schema), orderController.userCreateOrder);
+OrderRoute.post('/guest', orderController.guestCreateOrder);
 OrderRoute.get('/train', orderController.trainModel);
 OrderRoute.get('/get-statistics', orderController.getStatistics);
 OrderRoute.get('/get-unique-id', orderController.getUniqueId);

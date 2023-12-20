@@ -468,6 +468,73 @@ class OrderService {
       throw error
     }
   }
+
+  guestCreateOrder = async (req: JWTRequest) => {
+    try {
+      // Check payment method
+      const payment_method_id = req.body.payment_method_id
+      if (!payment_method_id) {
+        throw new HttpException('Payment method not found', 404);
+      }
+      const payment_method = await this.paymentMethodModel.findByPk(payment_method_id);
+      if (!payment_method) {
+        throw new HttpException('Payment method not found', 404);
+      }
+
+      const { vnp_ResponseCode } = req.body;
+
+      if (vnp_ResponseCode && vnp_ResponseCode !== '00') {
+        throw new HttpException('Payment failed. Please pay again', 400);
+      }
+
+      // Create order
+      const order = await this.orderModel.create({
+        phone_number: req.body.phone_number,
+        customer_name: req.body.name,
+        email: req.body.email,
+        status: 'Preparing order',
+        address: req.body.address,
+        payment_method_id: payment_method.id,
+        ...(vnp_ResponseCode === '00' ? { payment_method_id: 2, paidAt: moment() } : {}),
+        created_by: 'guest'
+      });
+
+      // Create order items
+      const order_items = req.body.order;
+      let total_order_quantity = 0;
+      let total_order_price = 0;
+
+      const createOrderItemsPromise = order_items.map(async (order_item: any) => {
+        await this.orderItemModel.create({
+          order_id: order.id,
+          ...order_item,
+        });
+        total_order_quantity = total_order_quantity + order_item.quantity;
+        const variant = await this.variantModel.findByPk(order_item.variant_id);
+        if (!variant) {
+          throw new HttpException(`Variant with id ${order_item.variant_id} not found`, 404);
+        }
+        const product = await this.productModel.findByPk(variant.product_id);
+        if (!product) {
+          throw new HttpException(`Product with id ${order_item.product_id} not found`, 404);
+        }
+        total_order_price = total_order_price + order_item.quantity * product.current_price;
+      });
+
+      await Promise.all(createOrderItemsPromise);
+
+      // Update order with price and total amount
+      await order.update({
+        price: total_order_price,
+        total_order_amount: total_order_quantity,
+      });
+
+      // Return order
+      return order;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default OrderService;
