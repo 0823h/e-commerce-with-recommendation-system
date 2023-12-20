@@ -17,6 +17,7 @@ export const adminCreateOrderBody = {
 
 export const userCreateOrderBody = {
   body: Joi.object({
+    vnp_ResponseCode: Joi.string().optional(),
     address: Joi.string().required(),
     email: Joi.string().required(),
     phone_number: Joi.string().required(),

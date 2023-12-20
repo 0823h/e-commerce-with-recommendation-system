@@ -115,54 +115,49 @@ class OrderService {
 
   vnpay = async (req: JWTRequest) => {
     try {
-      const { user_id } = (<JwtPayload>req.auth).data;
-      const user = await this.userModel.findByPk(user_id);
-      if (!user) {
-        throw new HttpException('User not found', 403);
-      }
+      // const { user_id } = (<JwtPayload>req.auth).data;
+      // const user = await this.userModel.findByPk(user_id);
+      // if (!user) {
+      //   throw new HttpException('User not found', 403);
+      // }
 
-      const { email, phone_number, address } = req.body;
+      const { total_order_amount, price } = req.body;
 
-      const order = await this.orderModel.create({
-        user_id: user.id,
-        phone_number: req.body.phone_number,
-        customer_name: user.first_name + user.last_name,
-        email: req.body.email,
-        status: 'Preparing order',
-        address: req.body.address,
-        payment_method_id: 2, // VNPAY
-        paidAt: moment(),
-        created_by: 'user'
-      });
+      // const order = await this.orderModel.create({
+      //   id: objectId(),
+      //   user_id,
+      //   price,
+      //   total_order_amount,
+      //   address: user.address,
+      //   phone_number: user.phone_number,
+      //   email: user.email,
+      //   is_fraud: false,
+      // });
 
-      const order_items = req.body.order;
-      let total_order_quantity = 0;
-      let total_order_price = 0;
+      // const createOrderItemsPromise = order_items.map(async (order_item: any) => {
+      //   await this.orderItemModel.create({
+      //     order_id: order.id,
+      //     ...order_item,
+      //   });
+      //   total_order_quantity = total_order_quantity + order_item.quantity;
+      //   const variant = await this.variantModel.findByPk(order_item.variant_id);
+      //   if (!variant) {
+      //     throw new HttpException(`Variant with id ${order_item.variant_id} not found`, 404);
+      //   }
+      //   const product = await this.productModel.findByPk(variant.product_id);
+      //   if (!product) {
+      //     throw new HttpException(`Product with id ${order_item.product_id} not found`, 404);
+      //   }
+      //   total_order_price = total_order_price + order_item.quantity * product.current_price;
+      // });
 
-      const createOrderItemsPromise = order_items.map(async (order_item: any) => {
-        await this.orderItemModel.create({
-          order_id: order.id,
-          ...order_item,
-        });
-        total_order_quantity = total_order_quantity + order_item.quantity;
-        const variant = await this.variantModel.findByPk(order_item.variant_id);
-        if (!variant) {
-          throw new HttpException(`Variant with id ${order_item.variant_id} not found`, 404);
-        }
-        const product = await this.productModel.findByPk(variant.product_id);
-        if (!product) {
-          throw new HttpException(`Product with id ${order_item.product_id} not found`, 404);
-        }
-        total_order_price = total_order_price + order_item.quantity * product.current_price;
-      });
+      // await Promise.all(createOrderItemsPromise);
 
-      await Promise.all(createOrderItemsPromise);
-
-      // Update order with price and total amount
-      await order.update({
-        price: total_order_price,
-        total_order_amount: total_order_quantity,
-      });
+      // // Update order with price and total amount
+      // await order.update({
+      //   price: total_order_price,
+      //   total_order_amount: total_order_quantity,
+      // });
 
       process.env.TZ = 'Asia/Ho_Chi_Minh';
 
@@ -198,16 +193,16 @@ class OrderService {
       vnp_Params['vnp_TmnCode'] = tmnCode;
       vnp_Params['vnp_Locale'] = 'vn';
       vnp_Params['vnp_CurrCode'] = currCode;
-      vnp_Params['vnp_TxnRef'] = order.id;
+      vnp_Params['vnp_TxnRef'] = objectId();
       // vnp_Params['vnp_OrderInfo'] = 'Thanh toan cho ma don hang:' + orderId;
-      vnp_Params['vnp_OrderInfo'] = 'Thanh toan cho ma don hang:' + order.id;
+      vnp_Params['vnp_OrderInfo'] = 'Thanh toán cho đơn hàng';
       vnp_Params['vnp_OrderType'] = 'other';
       // vnp_Params['vnp_Amount'] = amount * 100;
-      vnp_Params['vnp_Amount'] = order.price * 100;
+      vnp_Params['vnp_Amount'] = total_order_amount * 100;
       vnp_Params['vnp_ReturnUrl'] = returnUrl;
       vnp_Params['vnp_IpAddr'] = ipAddr;
       // vnp_Params['vnp_CreateDate'] = createDate;
-      vnp_Params['vnp_CreateDate'] = moment(order.createdAt).format('YYYYMMDDHHmmss');
+      vnp_Params['vnp_CreateDate'] = moment().format('YYYYMMDDHHmmss');
       if (bankCode !== null && bankCode !== '') {
         vnp_Params['vnp_BankCode'] = bankCode;
       }
@@ -294,6 +289,12 @@ class OrderService {
         throw new HttpException('Payment method not found', 404);
       }
 
+      const { vnp_ResponseCode } = req.body;
+
+      if (vnp_ResponseCode && vnp_ResponseCode !== '00') {
+        throw new HttpException('Payment failed. Please pay again', 400);
+      }
+
       // Create order
       const order = await this.orderModel.create({
         user_id: user.id,
@@ -305,6 +306,7 @@ class OrderService {
         status: 'Preparing order',
         address: req.body.address,
         payment_method_id: payment_method.id,
+        ...(vnp_ResponseCode === '00' ? { payment_method_id: 2, paidAt: moment() } : {}),
         created_by: 'user'
       });
 
