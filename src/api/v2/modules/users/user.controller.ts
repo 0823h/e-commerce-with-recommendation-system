@@ -225,6 +225,21 @@ class UserController {
       return next(error);
     }
   }
+
+  getOrdersNoPaginate = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const orders = await this.userService.getOrdersNoPaginate(req);
+      return res.status(200).json({
+        status: 200,
+        message: 'success',
+        data: {
+          records: orders,
+        }
+      })
+    } catch (error) {
+      return next(error);
+    }
+  }
 }
 
 export default UserController;

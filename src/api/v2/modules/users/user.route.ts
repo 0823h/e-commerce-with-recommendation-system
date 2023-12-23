@@ -26,6 +26,7 @@ userRoute.put('/self', auth, validate(userUpdateBody as schema), userController.
 userRoute.post('/guests', userController.createGuest);
 
 userRoute.get('/get-orders', auth, userController.getOrders);
+userRoute.get('/get-orders-no-paginate', auth, userController.getOrdersNoPaginate);
 
 userRoute.get('/', auth, adminRoleCheck(['superadmin']), userController.getUsers);
 userRoute.post(

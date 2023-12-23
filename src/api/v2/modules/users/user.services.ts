@@ -346,6 +346,24 @@ class UserService {
     } catch (error) {
       throw error;
     }
+
+  }
+  getOrdersNoPaginate = async (req: JWTRequest) => {
+    try {
+      const { user_id } = (<JwtPayload>req.auth).data;
+      const user = await this.userModel.findByPk(user_id);
+      if (!user) {
+        throw new HttpException('User not found', 404);
+      }
+  
+      const orders = await this.orderModel.findAll({
+        where: { user_id: user.id }
+      });
+  
+      return orders
+    } catch (error) {
+      throw error;
+    }
   }
 }
 

@@ -55,7 +55,7 @@ const Order = db.sequelize?.define<IOrder>(
     },
     status: {
       type: DataTypes.ENUM('Preparing order', 'Awaiting pickup', 'Picking up', 'Order picked up', 'Delivering', 'Delivered successfully', 'Delivery failed'),
-      allowNull: false,
+      allowNull: true,
       defaultValue: 'Preparing order'
     },
     created_by: {
