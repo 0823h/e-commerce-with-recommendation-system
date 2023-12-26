@@ -1,9 +1,10 @@
 const dfd = require("danfojs-node");
 dfd
-    .readCSV("./csv/AmazonSaleReport.csv")
+    .readCSV("./AmazonSaleReport.csv")
     .then((df) => {
-        //display top 5 rows
-        df.head().print();
+        // df.head().print();
+        let sub_df = df.loc({columns: ["Qty", "AmountVND", "isDeliveredFailed"]})
+        sub_df.print()
     })
     .catch((err) => {
         console.log(err);
