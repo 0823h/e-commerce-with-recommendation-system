@@ -18,6 +18,7 @@ OrderRoute.post('/guest', orderController.guestCreateOrder);
 OrderRoute.get('/train', orderController.trainModel);
 OrderRoute.get('/get-statistics', orderController.getStatistics);
 OrderRoute.get('/get-chart-statistics', orderController.getChartStatistics);
+OrderRoute.get('/get-chart-statistics-for-shipper', auth, adminRoleCheck(['shipper']), orderController.getChartStatisticsForShipper);
 OrderRoute.get('/get-unique-id', orderController.getUniqueId);
 OrderRoute.post('/vnpay', orderController.vnpay);
 OrderRoute.get('/:id/products-name', orderController.getOrderProducts);

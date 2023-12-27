@@ -539,6 +539,78 @@ class OrderService {
     }
   }
 
+  getChartStatisticsForShipper = async (req: JWTRequest) => {
+    try {
+      const { admin_id } = (<JwtPayload>req.auth).data;
+      
+      let start_date: any = req.query.start_date;
+      let end_date: any = req.query.end_date;
+
+      let moment_start_date = moment(start_date);
+      let moment_end_date = moment(end_date);
+
+      let dateList = [];
+
+      while (moment_start_date.isSameOrBefore(moment_end_date)) {
+        dateList.push(moment_start_date.format('YYYY-MM-DD'));
+        moment_start_date.add(1, 'day');
+      }
+ 
+      const data = await this.orderModel.findAll(
+        {
+          attributes: [
+            [fn('date_trunc', 'day',col('createdAt')), 'orderDate'],
+            [fn('count', col('*')), 'orderCount'],
+          ],
+          where: {
+            assigned_to_shipper: admin_id,
+            createdAt: {
+              [Op.between]: [start_date, end_date],
+            }
+          },
+          group: [fn('date_trunc', 'day', col('createdAt'))],
+      }
+      )
+
+      let map_data = data.map((el) => {
+        return {
+          orderDate: moment(el.dataValues.orderDate).add(1,'days').format('YYYY-MM-DD'),
+          orderCount: el.dataValues.orderCount
+        }
+      })
+
+      let filledDatelistObject = dateList.map((el) => {
+        return {
+          orderDate: el,
+          orderCount: 0
+        }
+      })
+
+      const resultMap = new Map(map_data.map(item => [item.orderDate, parseInt(item.orderCount)]));
+
+      const mergedArray = filledDatelistObject.map(item => ({
+        orderDate: item.orderDate,
+        orderCount: resultMap.get(item.orderDate) || item.orderCount
+      }));
+
+      let order_date_array: any = [];
+      let order_count_array: any = [];
+
+      mergedArray.forEach((el) => {
+        order_date_array.push(el.orderDate);
+        order_count_array.push(el.orderCount);
+      })
+
+      return {
+        orderDate: order_date_array,
+        orderCount: order_count_array
+      };
+    }
+    catch (error) {
+      throw error;
+    }
+  }
+
   guestCreateOrder = async (req: JWTRequest) => {
     try {
       // Check payment method
