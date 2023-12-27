@@ -4,7 +4,7 @@ import Product, { IProduct } from '@models/product.model';
 import User, { IUser } from '@models/user.model';
 import Variant, { IVariant } from '@models/variant.model';
 import Admin, { IAdmin } from '@src/configs/database/models/admin.model';
-import { ModelStatic, Op } from 'sequelize';
+import { ModelStatic, Op, col, fn } from 'sequelize';
 import { Request as JWTRequest } from 'express-jwt';
 import { decisionTree, training } from '../../utils/predict_freud_order';
 import { HttpException } from '../../utils/http-exception';
@@ -14,6 +14,7 @@ import { JwtPayload } from 'jsonwebtoken';
 import { objectId } from '../../utils/functions';
 import { IQuery } from '../products/product.interface';
 import PaymentMethod, { IPaymentMethod } from '@src/configs/database/models/payment_method.model';
+import { date } from 'joi';
 class OrderService {
   private readonly orderModel: ModelStatic<IOrder>;
   private readonly orderItemModel: ModelStatic<IOrderItem>;
@@ -466,6 +467,75 @@ class OrderService {
       return object;
     } catch (error) {
       throw error
+    }
+  }
+
+  getChartStatistics = async (req: JWTRequest) => {
+    try {
+      let start_date: any = req.query.start_date;
+      let end_date: any = req.query.end_date;
+
+      let moment_start_date = moment(start_date);
+      let moment_end_date = moment(end_date);
+
+      let dateList = [];
+
+      while (moment_start_date.isSameOrBefore(moment_end_date)) {
+        dateList.push(moment_start_date.format('YYYY-MM-DD'));
+        moment_start_date.add(1, 'day');
+      }
+ 
+      const data = await this.orderModel.findAll(
+        {
+          attributes: [
+            [fn('date_trunc', 'day',col('createdAt')), 'orderDate'],
+            [fn('count', col('*')), 'orderCount'],
+          ],
+          where: {
+            createdAt: {
+              [Op.between]: [start_date, end_date],
+            }
+          },
+          group: [fn('date_trunc', 'day', col('createdAt'))],
+      }
+      )
+
+      let map_data = data.map((el) => {
+        return {
+          orderDate: moment(el.dataValues.orderDate).add(1,'days').format('YYYY-MM-DD'),
+          orderCount: el.dataValues.orderCount
+        }
+      })
+
+      let filledDatelistObject = dateList.map((el) => {
+        return {
+          orderDate: el,
+          orderCount: 0
+        }
+      })
+
+      const resultMap = new Map(map_data.map(item => [item.orderDate, parseInt(item.orderCount)]));
+
+      const mergedArray = filledDatelistObject.map(item => ({
+        orderDate: item.orderDate,
+        orderCount: resultMap.get(item.orderDate) || item.orderCount
+      }));
+
+      let order_date_array: any = [];
+      let order_count_array: any = [];
+
+      mergedArray.forEach((el) => {
+        order_date_array.push(el.orderDate);
+        order_count_array.push(el.orderCount);
+      })
+
+      return {
+        orderDate: order_date_array,
+        orderCount: order_count_array
+      };
+    }
+    catch (error) {
+      throw error;
     }
   }
 

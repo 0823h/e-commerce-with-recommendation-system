@@ -172,6 +172,20 @@ class OrderController {
       return next(error);
     }
   }
+
+  getChartStatistics = async (req: JWTRequest, res: Response, next: NextFunction) => {
+    try {
+      const data = await this.orderService.getChartStatistics(req);
+      return res.status(200).json({
+        status: 200,
+        message: 'success',
+        data,
+      });
+      return
+    } catch (error) {
+      return next(error);
+    }
+  }
 }
 
 export default OrderController;
