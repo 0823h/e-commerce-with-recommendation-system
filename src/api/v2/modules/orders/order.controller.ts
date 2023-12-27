@@ -26,22 +26,13 @@ class OrderController {
   trainModel = async (req: JWTRequest, res: Response, next: NextFunction) => {
     try {
       const is_fraud = await this.orderService.trainModel(req);
-      if (is_fraud === true) {
-        return res.status(200).json({
-          status: 200,
-          message: 'success',
-          data: {
-            is_fraud,
-          },
-        });
-      }
       return res.status(200).json({
         status: 200,
         message: 'success',
         data: {
-          is_fraud,
+          data: is_fraud,
         },
-      });
+      });         
     } catch (error) {
       console.log(error);
       return next(error);
