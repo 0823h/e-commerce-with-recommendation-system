@@ -97,40 +97,56 @@ export const training = async () => {
 
 export const decisionTree = async (order_info: IOrder) => {
   try {
-    const dfd = require("danfojs-node");
-    dfd.readCSV("src/api/v2/utils/AmazonSaleReport.csv").then((df: any) => {
-      let df_drop = df.loc({columns: ["Qty", "AmountVND", "isDeliveredFailed"]})
-      console.log(df_drop)
+    // const dfd = require("danfojs-node");
+    // dfd.readCSV("src/api/v2/utils/AmazonSaleReport.csv").then((df: any) => {
+    //   let df_drop = df.loc({ columns: ["Qty", "AmountVND", "isDeliveredFailed"] })
+    //   console.log(df_drop)
 
-      let x = df_drop.loc({columns: ["Qty", "AmountVND"]})
-      x = x.values;
-      // console.log("x: " + x);
+    //   let x = df_drop.loc({ columns: ["Qty", "AmountVND"] })
+    //   x = x.values;
+    //   // console.log("x: " + x);
 
-      let y = df_drop["isDeliveredFailed"].values.map((value: boolean) => {
-        if(value === true) return 1;
-        else return 0;
-      })
-      // console.log("y: " + y);
+    //   let y = df_drop["isDeliveredFailed"].values.map((value: boolean) => {
+    //     if (value === true) return 1;
+    //     else return 0;
+    //   })
+    //   // console.log("y: " + y);
 
-      sk.setBackend(tf);
+    //   sk.setBackend(tf);
 
-      const clf = new DecisionTreeClassifier({ criterion: 'gini', maxDepth: 4 });
-      clf.fit(x, y)
+    //   const clf = new DecisionTreeClassifier({ criterion: 'gini', maxDepth: 4 });
+    //   clf.fit(x, y)
 
-      const cleaned_order_info = [
-        order_info.total_order_amount,
-        order_info.price,
-      ];
+    //   const cleaned_order_info = [
+    //     order_info.total_order_amount,
+    //     order_info.price,
+    //   ];
 
-      return clf.predict([cleaned_order_info])[0];
+    //   return clf.predict([cleaned_order_info])[0];
+    // })
+    //   .catch((err: any) => {
+    //     console.log("Error: " + err);
+    //     throw err;
+    //   });
+
+    const df = await dfd.readCSV("src/api/v2/utils/AmazonSaleReport.csv");
+    let df_drop = await df.loc({ columns: ["Qty", "AmountVND", "isDeliveredFailed"] })
+    let x = await df_drop.loc({ columns: ["Qty", "AmountVND"] })
+    let y = await df_drop["isDeliveredFailed"].values.map((value: boolean) => {
+      if (value === true) return 1;
+      else return 0;
     })
-    .catch((err: any) => {
-      console.log("Error: " + err);
-      throw err;
-    });
+    sk.setBackend(tf);
 
+    const clf = new DecisionTreeClassifier({ criterion: 'gini', maxDepth: 4 });
+    await clf.fit(x, y)
 
+    const cleaned_order_info = [
+      order_info.total_order_amount,
+      order_info.price,
+    ];
 
+    return clf.predict([cleaned_order_info])[0];
     // let df = await dfd.readCSV(
     //   "https://raw.githubusercontent.com/adejumoridwan/Motorcycle-Sales-Dashboard/main/data/sales_data.csv"
     // );
