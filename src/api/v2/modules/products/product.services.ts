@@ -263,24 +263,32 @@ class ProductService {
       }
       const n_users = (await this.userModel.findAndCountAll()).count;
       const n_products = (await this.productModel.findAndCountAll()).count;
+
+      // Get Recommendation Score Of All Products
       const cf = new CF(n_users, n_products, user_id, 2);
       const product_suggested_ids = await cf.runCF();
 
-      console.log('product_suggested_ids: ', product_suggested_ids);
+      // [PRINT] To be recommend Product Ids
+      console.log('To be recommend Product Ids: ', product_suggested_ids);
+      // -------------END PRINTING----------------
 
       const product_suggested_ids_postive: number[][] = [];
 
+      // Filtering Score > 0
       product_suggested_ids.forEach((id) => {
         if (id[1] > 0) {
           product_suggested_ids_postive.push(id);
         }
       });
 
+      // Query For Products Name From Ids
       const products_promise = product_suggested_ids_postive.map(async (product_id) => {
         return await this.productModel.findByPk(product_id[0]);
       });
 
       const products = await Promise.all(products_promise);
+
+      // Return !!!
       return products;
     } catch (error) {
       console.log(error);
@@ -302,14 +310,16 @@ class ProductService {
       if (!user) {
         throw new HttpException('User not found', 404);
       }
-      console.log("user: " + user);
+      // console.log("user: " + user);
 
       const n_users = (await this.userModel.findAndCountAll()).count;
       const n_products = (await this.productModel.findAndCountAll()).count;
       const cf = new CF(n_users, n_products, user.id, 2);
       const product_suggested_ids = await cf.runCF();
 
-      console.log('product_suggested_ids: ', product_suggested_ids);
+      // [PRINT] To be recommend Product Ids
+      console.log('To be recommend Product Ids: ', product_suggested_ids);
+      // -------------END PRINTING----------------
 
       const product_suggested_ids_postive: number[][] = [];
 

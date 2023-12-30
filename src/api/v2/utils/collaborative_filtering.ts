@@ -132,12 +132,13 @@ class CF {
 
     // console.log('s_v length: ', similarity_vector.length, similarity_vector);
     // console.log('k: ', this.k);
+    // Calculate Predict Value
     for (let i = 0; i < this.k; i += 1) {
       const user_normalize_rate = Y_bar_data.getColumn(similarity_vector[i][0]).tolist()[product_id];
       predict_value += user_normalize_rate * similarity_vector[i][1];
-      console.log(`user_normalize_rate: `, user_normalize_rate);
-      console.log(`similarity_vector[${i}][1]: `, similarity_vector[i][1]);
-      console.log(`Math.abs(similarity_vector[${i}][1])`, Math.abs(similarity_vector[i][1]));
+      // console.log(`user_normalize_rate: `, user_normalize_rate);
+      // console.log(`similarity_vector[${i}][1]: `, similarity_vector[i][1]);
+      // console.log(`Math.abs(similarity_vector[${i}][1])`, Math.abs(similarity_vector[i][1]));
       similarity_total += Math.abs(similarity_vector[i][1]);
     }
 
@@ -164,8 +165,11 @@ class CF {
     // const distant = cosine_similarity(Y_bar_data.getColumn(0).tolist(), Y_bar_data.getColumn(2).tolist());
 
     // console.log(distant);
-    console.log(Y_data.getUsersWhoRateProduct(this.user_id, 1));
-    console.log('Product not rate: ', Y_data.getProductsNotRateYet(this.user_id));
+    // console.log(Y_data.getUsersWhoRateProduct(this.user_id, 1));
+
+    // Print Products That Have Not Been Rated
+    console.log('Products That Have Not Been Rated: ', Y_data.getProductsNotRateYet(this.user_id));
+    // -------------END PRINTING----------------
 
     // const predict_product = nj.zeros(this.n_products);
 
@@ -176,7 +180,10 @@ class CF {
       suggest_products.push([product_id, this.predict(Y_data, Y_bar_data, product_id)]);
     });
 
-    console.log(suggest_products);
+    // Print Products That Will Be Recommended
+    console.log("Products That Will Be Recommended: " + suggest_products);
+    // -------------END PRINTING----------------
+
     return suggest_products;
   };
 }
