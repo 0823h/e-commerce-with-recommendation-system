@@ -58,7 +58,7 @@ class Matrix {
   getYbar = () => {
     let Y_bar = new Matrix(this.n_rows, this.n_columns);
     Y_bar = this.cloneMatrix();
-    Y_bar.print();
+    // Y_bar.print();
 
     const m_users = this.getMeanUsers();
     for (let i = 0; i < this.n_columns; i += 1) {

@@ -29,8 +29,7 @@ class CF {
     this.k = k;
   }
 
-  // predict = (product_id) => {};
-
+  // Create Matrix And Load Data Into Matrix
   loadYData = async (): Promise<Matrix> => {
     try {
       const feedbacks = await this.feedbackModel.findAll();
@@ -47,24 +46,30 @@ class CF {
         throw new HttpException('Cannot get users for CF', 409);
       }
 
-      console.log('n_users: ', this.n_users);
+      console.log('Number Of Users: ', this.n_users);
+      console.log('Number Of Products: ', this.n_products);
 
+      //  Create Matrix
       const Y_data = new Matrix(this.n_products, this.n_users);
 
+      // Print Matrix AFter Creating
+      console.log("Print Matrix AFter Creating");
       Y_data.print();
+      // -------------END PRINTING----------------
 
+      // Load Matrix Data
       for (let i = 0; i < this.n_users; i += 1) {
         for (let j = 0; j < feedbacks.length; j += 1) {
           if (feedbacks[j].user_id === users[i].id) {
-            console.log('Row: ', feedbacks[j].product_id, 'Column: ', users[i].id, 'Value: ', feedbacks[j].rate);
             Y_data.setData(feedbacks[j].product_id, users[i].id, feedbacks[j].rate);
           }
         }
       }
 
+      // Print Matrix After Filling Data
+      console.log("Print Matrix AFter FILLING");
       Y_data.print();
-      console.log('----------');
-      Y_data.print();
+      // -------------END PRINTING----------------
 
       return Y_data;
     } catch (err) {
@@ -74,15 +79,25 @@ class CF {
   };
 
   predict = (Y_data: Matrix, Y_bar_data: Matrix, product_id: number) => {
+    // Find Users Who Have Rated The Product
     const users_ids_who_rate_product = Y_data.getUsersWhoRateProduct(this.user_id, product_id);
-    console.log(`userid who rate product ${product_id}`, users_ids_who_rate_product);
 
+    // Print Users Who Have Rated The Product
+    console.log(`Users Who Have Rated The Product ${product_id}`, users_ids_who_rate_product);
+    // -------------END PRINTING----------------
+
+    // Calculate Similarity Vector Filled With -1 With The Users Who Have Rated The Product
     const similarity_vector: number[][] = nj
       .zeros([users_ids_who_rate_product.length, 2])
       .subtract(nj.ones([users_ids_who_rate_product.length, 2]))
       .tolist();
-    console.log(similarity_vector);
 
+    // Print Similarity Vector
+    console.log("Similarity Vector With These Users: ", similarity_vector);
+    // -------------END PRINTING----------------
+
+    // Calculate Similarity Vector With The Users Who Have Rated The Products
+    // Similarity Vector Has Form: [ [UserId, SimilarityScore], [UserId, SimilarityScore], [UserId, SimilarityScore], .... ]
     users_ids_who_rate_product.forEach((user) => {
       similarity_vector[user] = [
         user,
@@ -90,12 +105,16 @@ class CF {
       ];
     });
 
+    // Sort The Similarity Vector In Descending Order
     similarity_vector.sort((a, b) => {
       return b[1] - a[1];
     });
 
-    console.log('sorted sv: ', similarity_vector, ' of: ', product_id);
+    // Print The Sorted Similarity Vector
+    console.log('Sorted Similarity Vector', similarity_vector, ' Of: ', product_id);
+    // -------------END PRINTING----------------
 
+    // Predict Value
     const k_reserved = this.k;
     if (this.k > similarity_vector.length) {
       this.k = similarity_vector.length;
@@ -104,11 +123,15 @@ class CF {
     let predict_value = 0;
     let similarity_total = 0;
 
+    // Calculate Mean User Vector
     const m_users = Y_data.getMeanUsers().tolist();
-    console.log('---------------------------------------------------------------------');
-    console.log('m_users: ', m_users);
-    console.log('s_v length: ', similarity_vector.length, similarity_vector);
-    console.log('k: ', this.k);
+
+    // Print Mean User Vector
+    console.log('Mean User Vector: ', m_users);
+    // -------------END PRINTING----------------
+
+    // console.log('s_v length: ', similarity_vector.length, similarity_vector);
+    // console.log('k: ', this.k);
     for (let i = 0; i < this.k; i += 1) {
       const user_normalize_rate = Y_bar_data.getColumn(similarity_vector[i][0]).tolist()[product_id];
       predict_value += user_normalize_rate * similarity_vector[i][1];
@@ -126,21 +149,18 @@ class CF {
   };
 
   runCF = async () => {
-    // const a = nj.arange(12).reshape(3, 4).tolist(); // 1d array
-    // console.log(a);
-
+    // Create Utility Matrix
     const Y_data = await this.loadYData();
-    console.log('row:', Y_data.getRow(4).toJSON());
-    console.log('col: ', Y_data.getColumn(0).toJSON());
 
-    console.log('m_users: ', Y_data.getMeanUsers().toJSON());
-
-    console.log('Y_bar_data: ');
+    // Create Utility Bar (Utility Matrix After Subtract Mean User)
     const Y_bar_data = Y_data.getYbar();
-    Y_bar_data.print();
 
-    console.log(Y_bar_data.getColumn(1).tolist());
-    console.log(Y_bar_data.getColumn(2).tolist());
+    // Print Utility Bar Matrix
+    Y_bar_data.print();
+    // -------------END PRINTING----------------
+
+    // console.log(Y_bar_data.getColumn(1).tolist());
+    // console.log(Y_bar_data.getColumn(2).tolist());
     // const distant = cosine_similarity(Y_bar_data.getColumn(0).tolist(), Y_bar_data.getColumn(2).tolist());
 
     // console.log(distant);
