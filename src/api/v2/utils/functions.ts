@@ -89,7 +89,7 @@ export const checkZeroArray = (array: number[]): boolean => {
 
 export const cosine_similarity = (a: number[], b: number[]): number => {
   if (checkZeroArray(a) === true || checkZeroArray(b) === true) {
-    console.log('zero!!');
+    // console.log('zero!!');
     return math.dot(a, b) / (Number(math.norm(a)) * Number(math.norm(b)) + 1e-10);
   }
   return math.dot(a, b) / (Number(math.norm(a)) * Number(math.norm(b)));

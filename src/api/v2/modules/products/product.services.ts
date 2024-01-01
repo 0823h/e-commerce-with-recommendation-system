@@ -268,8 +268,8 @@ class ProductService {
       const cf = new CF(n_users, n_products, user_id, 2);
       const product_suggested_ids = await cf.runCF();
 
-      // [PRINT] To be recommend Product Ids
-      console.log('To be recommend Product Ids: ', product_suggested_ids);
+      // [PRINT] All Predict Scores Of User
+      console.log('All Predict Scores Of User: ', product_suggested_ids);
       // -------------END PRINTING----------------
 
       const product_suggested_ids_postive: number[][] = [];
@@ -317,8 +317,8 @@ class ProductService {
       const cf = new CF(n_users, n_products, user.id, 2);
       const product_suggested_ids = await cf.runCF();
 
-      // [PRINT] To be recommend Product Ids
-      console.log('To be recommend Product Ids: ', product_suggested_ids);
+      // [PRINT] All Predict Scores Of User
+      console.log('All Predict Scores Of User: ', product_suggested_ids);
       // -------------END PRINTING----------------
 
       const product_suggested_ids_postive: number[][] = [];

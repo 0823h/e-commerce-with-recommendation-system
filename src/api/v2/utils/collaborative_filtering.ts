@@ -53,7 +53,7 @@ class CF {
       const Y_data = new Matrix(this.n_products, this.n_users);
 
       // Print Matrix AFter Creating
-      console.log("Print Matrix AFter Creating");
+      console.log("Print Matrix After Creating");
       Y_data.print();
       // -------------END PRINTING----------------
 
@@ -67,7 +67,7 @@ class CF {
       }
 
       // Print Matrix After Filling Data
-      console.log("Print Matrix AFter FILLING");
+      console.log("Print Matrix After FILLING");
       Y_data.print();
       // -------------END PRINTING----------------
 
@@ -93,17 +93,28 @@ class CF {
       .tolist();
 
     // Print Similarity Vector
-    console.log("Similarity Vector With These Users: ", similarity_vector);
+    // console.log("Similarity Vector With These Users: ", similarity_vector);
     // -------------END PRINTING----------------
 
     // Calculate Similarity Vector With The Users Who Have Rated The Products
     // Similarity Vector Has Form: [ [UserId, SimilarityScore], [UserId, SimilarityScore], [UserId, SimilarityScore], .... ]
-    users_ids_who_rate_product.forEach((user) => {
-      similarity_vector[user] = [
+    // users_ids_who_rate_product.forEach((user) => {
+    //   similarity_vector[user] = [
+    //     user,
+    //     cosine_similarity(Y_bar_data.getColumn(this.user_id).tolist(), Y_bar_data.getColumn(user).tolist()),
+    //   ];
+
+    //   console.log("similarity_vector[user]: " + similarity_vector[user])
+    // });
+
+    for (let index = 0; index < users_ids_who_rate_product.length; index++) {
+      const user = users_ids_who_rate_product[index];
+      similarity_vector[index] = [
         user,
         cosine_similarity(Y_bar_data.getColumn(this.user_id).tolist(), Y_bar_data.getColumn(user).tolist()),
-      ];
-    });
+      ]
+      
+    }
 
     // Sort The Similarity Vector In Descending Order
     similarity_vector.sort((a, b) => {
@@ -143,9 +154,13 @@ class CF {
     }
 
     this.k = k_reserved;
-    console.log('p_v: ', predict_value, 's_t: ', similarity_total);
-    console.log(predict_value / (similarity_total + 1e-10));
+
+    // Print Predict Score
+    console.log('Predict Score: ', predict_value / (similarity_total + 1e-10));
     console.log('---------------------------------------------------------------------');
+    // -------------END PRINTING----------------
+
+    // console.log(predict_value / (similarity_total + 1e-10));
     return predict_value / (similarity_total + 1e-10);
   };
 
@@ -157,6 +172,7 @@ class CF {
     const Y_bar_data = Y_data.getYbar();
 
     // Print Utility Bar Matrix
+    console.log("Utility Matrix After Normalize: ")
     Y_bar_data.print();
     // -------------END PRINTING----------------
 
@@ -180,8 +196,8 @@ class CF {
       suggest_products.push([product_id, this.predict(Y_data, Y_bar_data, product_id)]);
     });
 
-    // Print Products That Will Be Recommended
-    console.log("Products That Will Be Recommended: " + suggest_products);
+    // Print All Predict Scores Of User
+    // console.log("All Predict Scores Of User: " + suggest_products);
     // -------------END PRINTING----------------
 
     return suggest_products;
