@@ -15,17 +15,19 @@ class ContentBasedFiltering {
         id: product.id.toString(),
         description: product.description
       };
-      tfidf.addDocument(JSON.stringify(processedProduct));
+      tfidf.addDocument(JSON.stringify(processedProduct.description));
       return processedProduct;
     })
-
+    console.log(processedProducts)
     const productVectors = [];
 
     for (let i = 0; i < processedProducts.length; i++) {
       const processedProduct = processedProducts[i];
       const obj: any = {};
 
+      console.log({i})
       const items = tfidf.listTerms(i);
+      console.log({items})
 
       for (let j = 0; j < items.length; j++) {
         const item = items[j];

@@ -15,7 +15,7 @@ OrderRoute.get('/', auth, adminRoleCheck(['superadmin', 'staff']), orderControll
 OrderRoute.post('/admin', validate(adminCreateOrderBody as schema), orderController.adminCreateOrder);
 OrderRoute.post('/user', auth, validate(userCreateOrderBody as schema), orderController.userCreateOrder);
 OrderRoute.post('/guest', orderController.guestCreateOrder);
-OrderRoute.get('/train', orderController.trainModel);
+OrderRoute.post('/train', orderController.trainModel);
 OrderRoute.get('/get-statistics', orderController.getStatistics);
 OrderRoute.get('/get-chart-statistics', orderController.getChartStatistics);
 OrderRoute.get('/get-chart-statistics-for-shipper', auth, adminRoleCheck(['shipper']), orderController.getChartStatisticsForShipper);

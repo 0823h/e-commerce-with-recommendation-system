@@ -458,6 +458,7 @@ class ProductService {
       }
       const contentBasedFiltering = new ContentBasedFiltering();
       const productVectors = await contentBasedFiltering.createVectorFromProduct();
+      console.log({vector: productVectors[1].vector})
       const data = contentBasedFiltering.calculateSimilarity(productVectors);
       const similarityDocuments = contentBasedFiltering.getSimilarDocument(product.id, data);
 
